@@ -1,0 +1,314 @@
+[
+  {
+    "id": "6d3661",
+    "name": "Кіші жүз",
+    "parentId": null
+  },
+  {
+    "id": "4a16a3",
+    "name": "Байсары",
+    "parentId": "6d3661"
+  },
+  {
+    "id": "70eef4",
+    "name": "Әлім",
+    "parentId": "6d3661"
+  },
+  {
+    "id": "0abbd8",
+    "name": "Жаманақ (Шекті)",
+    "parentId": "70eef4"
+  },
+  {
+    "id": "62765b",
+    "name": "Шыңғыс",
+    "parentId": "0abbd8"
+  },
+  {
+    "id": "338cd4",
+    "name": "Өріс",
+    "parentId": "0abbd8"
+  },
+  {
+    "id": "d4cb7d",
+    "name": "Айдарбек",
+    "parentId": "338cd4"
+  },
+  {
+    "id": "aecd9e",
+    "name": "Есеналы",
+    "parentId": "338cd4"
+  },
+  {
+    "id": "7afadd",
+    "name": "Палуан",
+    "parentId": "aecd9e"
+  },
+  {
+    "id": "0512be",
+    "name": "Кішкене",
+    "parentId": "aecd9e"
+  },
+  {
+    "id": "9a8809",
+    "name": "Жиеней",
+    "parentId": "0512be"
+  },
+  {
+    "id": "be73bb",
+    "name": "Жолшара",
+    "parentId": "0512be"
+  },
+  {
+    "id": "fe29bb",
+    "name": "Асан",
+    "parentId": "0512be"
+  },
+  {
+    "id": "16edbf",
+    "name": "Сырлыбай",
+    "parentId": "fe29bb"
+  },
+  {
+    "id": "4b60fa",
+    "name": "Мәтіғұл",
+    "parentId": "16edbf"
+  },
+  {
+    "id": "5fdb63",
+    "name": "Нұрбай",
+    "parentId": "4b60fa"
+  },
+  {
+    "id": "0284b2",
+    "name": "Абыла",
+    "parentId": "5fdb63"
+  },
+  {
+    "id": "e1356b",
+    "name": "Досымбет",
+    "parentId": "0284b2"
+  },
+  {
+    "id": "77f272",
+    "name": "Үмбетәлі",
+    "parentId": "e1356b"
+  },
+  {
+    "id": "be18df",
+    "name": "Қуат",
+    "parentId": "77f272"
+  },
+  {
+    "id": "96ed9e",
+    "name": "Қулмұрат",
+    "parentId": "be18df"
+  },
+  {
+    "id": "af7c47",
+    "name": "Көшербай",
+    "parentId": "96ed9e"
+  },
+  {
+    "id": "a4f469",
+    "name": "Жүсіп",
+    "parentId": "be18df"
+  },
+  {
+    "id": "66a3aa",
+    "name": "Қали",
+    "parentId": "be18df"
+  },
+  {
+    "id": "e50fad",
+    "name": "Қабыл",
+    "parentId": "be18df"
+  },
+  {
+    "id": "90e6ed",
+    "name": "Қобылаш",
+    "parentId": "77f272"
+  },
+  {
+    "id": "a4dbfe",
+    "name": "Құлахмет",
+    "parentId": "90e6ed"
+  },
+  {
+    "id": "162640",
+    "name": "Құлмағанбет",
+    "parentId": "90e6ed"
+  },
+  {
+    "id": "181de1",
+    "name": "Темірхан",
+    "parentId": "162640"
+  },
+  {
+    "id": "850e70",
+    "name": "Сейтәлі",
+    "parentId": "77f272"
+  },
+  {
+    "id": "0d4e11",
+    "name": "Сейтәлі",
+    "parentId": "850e70"
+  },
+  {
+    "id": "302439",
+    "name": "Әжарқын",
+    "parentId": "0d4e11"
+  },
+  {
+    "id": "77f7a7",
+    "name": "Онталап",
+    "parentId": "0d4e11"
+  },
+  {
+    "id": "20b0e8",
+    "name": "Ондас",
+    "parentId": "0d4e11"
+  },
+  {
+    "id": "ca0221",
+    "name": "Қапақ",
+    "parentId": "77f272"
+  },
+  {
+    "id": "12ee5f",
+    "name": "Құттыбек",
+    "parentId": "77f272"
+  },
+  {
+    "id": "254715",
+    "name": "Құлмырза",
+    "parentId": "77f272"
+  },
+  {
+    "id": "5d43fd",
+    "name": "Пермебай",
+    "parentId": "254715"
+  },
+  {
+    "id": "af5cab",
+    "name": "Серік",
+    "lastName": "Құлмырза",
+    "parentId": "5d43fd"
+  },
+  {
+    "id": "dfc08e",
+    "name": "Жаржан",
+    "lastName": "Құлмырза",
+    "birthday": "1990-06-15",
+    "notes": "Бағдарламашы (Software Engineer). Әулет шежіресін құрастырушы.",
+    "parentId": "af5cab"
+  },
+  {
+    "id": "54e9а3",
+    "name": "Берік",
+    "lastName": "Дадабаев",
+    "gender": "male"
+  },
+  {
+    "id": "54e933",
+    "name": "Мереке",
+    "lastName": "Дадабаева",
+    "gender": "female",
+    "spouseOf": "dfc08e",
+    "parentId": "54e9а3"
+  },
+  {
+    "id": "c1ee1a",
+    "name": "Диас",
+    "lastName": "Серік",
+    "parentId": "dfc08e"
+  },
+  {
+    "id": "0284b5",
+    "name": "Сафия",
+    "lastName": "Серік",
+    "gender": "female",
+    "parentId": "dfc08e"
+  },
+  {
+    "id": "ea38a9",
+    "name": "Болат",
+    "lastName": "Құлмырза",
+    "parentId": "5d43fd"
+  },
+  {
+    "id": "fa6006",
+    "name": "Дәулетияр",
+    "parentId": "16edbf"
+  },
+  {
+    "id": "1b19e5",
+    "name": "Аташ",
+    "parentId": "16edbf"
+  },
+  {
+    "id": "bf64f9",
+    "name": "Баймырза",
+    "parentId": "16edbf"
+  },
+  {
+    "id": "77c67c",
+    "name": "Мәметек",
+    "parentId": "16edbf"
+  },
+  {
+    "id": "7e7c7b",
+    "name": "Өтеп",
+    "parentId": "fe29bb"
+  },
+  {
+    "id": "8c17ce",
+    "name": "Қожамберлі",
+    "parentId": "fe29bb"
+  },
+  {
+    "id": "925d94",
+    "name": "Құдайназар",
+    "parentId": "fe29bb"
+  },
+  {
+    "id": "54f3ef",
+    "name": "Үсен",
+    "parentId": "0512be"
+  },
+  {
+    "id": "7f28c7",
+    "name": "Баубек",
+    "parentId": "0abbd8"
+  },
+  {
+    "id": "6d27c9",
+    "name": "Қарамашақ",
+    "parentId": "70eef4"
+  },
+  {
+    "id": "41ef30",
+    "name": "Айнақ",
+    "parentId": "70eef4"
+  },
+  {
+    "id": "e10d7b",
+    "name": "Тегінболат",
+    "parentId": "70eef4"
+  },
+  {
+    "id": "1a90e1",
+    "name": "Тойқожа",
+    "parentId": "70eef4"
+  },
+  {
+    "id": "7fac3b",
+    "name": "Ұланақ",
+    "parentId": "70eef4"
+  },
+  {
+    "id": "f1458b",
+    "name": "Шөмен",
+    "parentId": "6d3661"
+  }
+]
