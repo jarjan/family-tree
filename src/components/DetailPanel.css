@@ -14,8 +14,12 @@
 }
 
 @keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .close-btn {
@@ -103,8 +107,19 @@
   border-bottom: none;
 }
 
-.bio-text, .no-data {
+.bio-text,
+.no-data {
   color: var(--text-secondary) !important;
   font-size: 0.95rem !important;
   font-style: italic;
+}
+
+.clickable-relative {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clickable-relative:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
 }

@@ -16,7 +16,14 @@ export const dictionaries = {
     male: "Male",
     female: "Female",
     spouse: "Spouse",
-    notes: "Notes"
+    notes: "Notes",
+    father: "Father",
+    mother: "Mother",
+    siblings: "Siblings",
+    cousins: "First Cousins",
+    grandparents: "Grandparents",
+    paternalSide: "Paternal Side",
+    maternalSide: "Maternal Side",
   },
   kk: {
     appTitle: "Шежіре",
@@ -35,16 +42,23 @@ export const dictionaries = {
     male: "Ер",
     female: "Әйел",
     spouse: "Жұбайы",
-    notes: "Жазбалар"
-  }
+    notes: "Жазбалар",
+    father: "Әкесі",
+    mother: "Анасы",
+    siblings: "Бауырлары",
+    cousins: "Бөле-жиендері",
+    grandparents: "Ата-әжелері",
+    paternalSide: "Әке жағы",
+    maternalSide: "Ана жағы",
+  },
 };
 
-export let currentLanguage = 'en';
+export let currentLanguage = "kk";
 
 export function setLanguage(lang) {
   currentLanguage = lang;
 }
 
 export function t(key) {
-  return dictionaries[currentLanguage]?.[key] || dictionaries['en'][key] || key;
+  return dictionaries[currentLanguage]?.[key] || dictionaries["en"][key] || key;
 }
