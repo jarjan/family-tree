@@ -25,6 +25,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
       cousins: [],
       children: [],
       grandchildren: [],
+      paternalAncestors: [],
     };
 
     // Parents
@@ -42,6 +43,25 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
           relatives.grandparents.push(data.find((d) => d.id === p.motherId));
       }
     });
+
+    // Paternal Line (Ancestors beyond Grandfather)
+    const paternalFather = data.find((d) => d.id === focalNode.fatherId);
+    if (paternalFather) {
+      const paternalGFId = paternalFather.fatherId;
+      const paternalGF = data.find((d) => d.id === paternalGFId);
+      if (paternalGF) {
+        let currentId = paternalGF.fatherId;
+        while (currentId) {
+          const ancestor = data.find((d) => d.id === currentId);
+          if (ancestor) {
+            relatives.paternalAncestors.push(ancestor);
+            currentId = ancestor.fatherId;
+          } else {
+            break;
+          }
+        }
+      }
+    }
 
     // Siblings
     relatives.siblings = data.filter(
@@ -155,7 +175,28 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
     });
   });
 
-  // 4. Siblings (Beside Focal)
+  // 4. Paternal Line extension (Above Grandparents)
+  const paternalFatherNode = relatives.parents[0];
+  if (paternalFatherNode) {
+    const pGFId = paternalFatherNode.fatherId;
+    const pGFNode = allNodes.find((n) => n.data.id === pGFId);
+    if (pGFNode) {
+      const baseX = pGFNode.x;
+      let currentAncY = gpY - Y_SPACING;
+
+      relatives.paternalAncestors.forEach((anc, i) => {
+        allNodes.push({ data: anc, x: baseX, y: currentAncY });
+        const targetY = i === 0 ? gpY : currentAncY + Y_SPACING;
+        allLinks.push({
+          source: { x: baseX, y: currentAncY },
+          target: { x: baseX, y: targetY },
+        });
+        currentAncY -= Y_SPACING;
+      });
+    }
+  }
+
+  // 5. Siblings (Beside Focal)
   relatives.siblings.forEach((sib, i) => {
     const sibx = -X_SPACING - i * X_SPACING;
     allNodes.push({ data: sib, x: sibx, y: 0 });
