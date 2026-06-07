@@ -24,6 +24,8 @@ export const dictionaries = {
     grandparents: "Grandparents",
     paternalSide: "Paternal Side",
     maternalSide: "Maternal Side",
+    unclesAunts: "Uncles & Aunts",
+    grandchildren: "Grandchildren",
   },
   kk: {
     appTitle: "Шежіре",
@@ -50,6 +52,8 @@ export const dictionaries = {
     grandparents: "Ата-әжелері",
     paternalSide: "Әке жағы",
     maternalSide: "Ана жағы",
+    unclesAunts: "Әке-ана бауырлары",
+    grandchildren: "Немерелері",
   },
 };
 

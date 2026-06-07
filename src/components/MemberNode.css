@@ -29,6 +29,7 @@
 }
 
 .avatar-placeholder {
+  aspect-ratio: 1;
   width: 32px;
   height: 32px;
   border-radius: 50%;
