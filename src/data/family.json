@@ -215,6 +215,7 @@
     "name": "Риза",
     "lastName": "Құлмырза",
     "birthday": "1996-02-09",
+    "gender": "female",
     "fatherId": "af5cab"
   },
   {
@@ -222,6 +223,7 @@
     "name": "Малика",
     "lastName": "Құлмырза",
     "birthday": "2005-01-07",
+    "gender": "female",
     "fatherId": "af5cab"
   },
   {

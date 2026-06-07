@@ -15,11 +15,11 @@ export function MemberNode({ data, isSelected, onClick }) {
         {initials}
       </div>
       <div className="info">
-        <h3 className="name">
-          {data.name} {data.lastName && <span className="last-name">{data.lastName}</span>}
-        </h3>
+        <div className="name-container">
+          <span className="first-name">{data.name}</span>
+          {data.lastName && <span className="last-name">{data.lastName}</span>}
+        </div>
       </div>
-      {isSelected && <div className="glow-ring"></div>}
     </div>
   );
 }

@@ -160,13 +160,16 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
 
   // 2. Parents (Above)
   const parentsY = -Y_SPACING;
+  const fatherNode = focalNode.fatherId ? data.find((d) => d.id === focalNode.fatherId) : null;
   relatives.parents.forEach((p, i) => {
     if (!p) return;
     const px = i === 0 ? -X_SPACING / 2 : X_SPACING / 2;
+    const isFather = fatherNode && p.id === fatherNode.id;
     allNodes.push({ data: p, x: px, y: parentsY });
     allLinks.push({
       source: { x: px, y: parentsY },
       target: { x: 0, y: 0 },
+      isPaternal: isFather,
     });
   });
 
@@ -191,15 +194,18 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
     const gpx =
       baseX + (gp.gender === "female" ? X_SPACING / 3 : -X_SPACING / 3);
 
+    const isPaternalGF = fatherNode && gp.id === fatherNode.fatherId;
+
     allNodes.push({ data: gp, x: gpx, y: gpY });
     allLinks.push({
       source: { x: gpx, y: gpY },
       target: { x: baseX, y: parentsY },
+      isPaternal: isPaternalGF,
     });
   });
 
   // 4. Paternal Line extension (Above Grandparents)
-  const paternalFatherNode = relatives.parents[0];
+  const paternalFatherNode = fatherNode;
   if (paternalFatherNode) {
     const pGFId = paternalFatherNode.fatherId;
     const pGFNode = allNodes.find((n) => n.data.id === pGFId);
@@ -213,6 +219,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
         allLinks.push({
           source: { x: baseX, y: currentAncY },
           target: { x: baseX, y: targetY },
+          isPaternal: true,
         });
         currentAncY -= Y_SPACING;
       });
@@ -435,7 +442,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
               <path
                 key={`link-${i}`}
                 d={path}
-                className={`tree-link ${link.isSpouse ? "spouse-link" : ""}`}
+                className={`tree-link ${link.isSpouse ? "spouse-link" : ""} ${link.isPaternal ? "paternal-link" : ""}`}
                 style={
                   link.isSpouse ? { strokeDasharray: "4 4", opacity: 0.5 } : {}
                 }

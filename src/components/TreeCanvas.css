@@ -21,9 +21,19 @@
 .tree-link {
   fill: none;
   stroke: var(--line-color);
-  stroke-width: 2px;
+  stroke-width: 1px;
   stroke-linecap: round;
-  transition: stroke 0.3s ease;
+  transition: stroke var(--transition-speed) ease;
+}
+
+.spouse-link {
+  stroke-dasharray: 3 3;
+  opacity: 0.65;
+}
+
+.paternal-link {
+  stroke-width: 2px;
+  stroke: rgba(0, 0, 0, 0.45);
 }
 
 .nodes-layer {

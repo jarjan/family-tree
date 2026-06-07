@@ -21,7 +21,7 @@ export function TreeApp() {
 
   return (
     <div className="app-container">
-      <header className="app-header glass">
+      <header className="app-header">
         <h1>{t("appTitle")}</h1>
         <div className="lang-switcher">
           <button
