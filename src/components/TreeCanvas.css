@@ -27,8 +27,16 @@
 }
 
 .spouse-link {
-  stroke-dasharray: 3 3;
-  opacity: 0.65;
+  stroke-dasharray: 4 4;
+  stroke-width: 1px;
+  opacity: 0.5;
+}
+
+.focal-spouse-link {
+  stroke-dasharray: 6 4;
+  stroke-width: 2.5px;
+  stroke: rgba(0, 0, 0, 0.7);
+  opacity: 0.95;
 }
 
 .paternal-link {

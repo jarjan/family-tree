@@ -40,12 +40,15 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
     if (mother) relatives.parents.push(mother);
 
     // Grandparents
-    relatives.parents.forEach((p) => {
+    relatives.parents.forEach((p, pIdx) => {
       if (p) {
-        if (p.fatherId)
-          relatives.grandparents.push(data.find((d) => d.id === p.fatherId));
-        if (p.motherId)
-          relatives.grandparents.push(data.find((d) => d.id === p.motherId));
+        const gFather = p.fatherId ? data.find((d) => d.id === p.fatherId) : null;
+        let gMother = null;
+        if (gFather) {
+          gMother = data.find((d) => d.spouseOf === gFather.id || (gFather.spouseOf && d.id === gFather.spouseOf));
+        }
+        if (gFather) relatives.grandparents.push({ ...gFather, parentIdx: pIdx });
+        if (gMother) relatives.grandparents.push({ ...gMother, parentIdx: pIdx });
       }
     });
 
@@ -80,6 +83,16 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
     relatives.children = data.filter(
       (d) => d.fatherId === focalNode.id || d.motherId === focalNode.id,
     );
+    if (focalNode.gender === "female" && relatives.children.length === 0) {
+      const spouse = data.find(
+        (d) =>
+          d.spouseOf === focalNode.id ||
+          (focalNode.spouseOf && d.id === focalNode.spouseOf),
+      );
+      if (spouse) {
+        relatives.children = data.filter((d) => d.fatherId === spouse.id || d.motherId === spouse.id);
+      }
+    }
 
     // Grandchildren
     relatives.children.forEach((c) => {
@@ -126,6 +139,34 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
     relatives.paternalUnclesAunts = paternalUnclesAunts;
     relatives.maternalUnclesAunts = maternalUnclesAunts;
 
+    relatives.spouseInfo = relatives.spouse.map((sp) => {
+      let father = sp.fatherId ? data.find((d) => d.id === sp.fatherId) : null;
+      let mother = sp.motherId ? data.find((d) => d.id === sp.motherId) : null;
+      if (father && !mother) {
+        mother = data.find((d) => d.spouseOf === father.id || (father.spouseOf && d.id === father.spouseOf));
+      } else if (mother && !father) {
+        father = data.find((d) => d.spouseOf === mother.id || (mother.spouseOf && d.id === mother.spouseOf));
+      }
+      const parents = [];
+      if (father) parents.push(father);
+      if (mother) parents.push(mother);
+
+      const siblings = data.filter(
+        (d) =>
+          d.id !== sp.id &&
+          ((sp.fatherId && d.fatherId === sp.fatherId) ||
+            (sp.motherId && d.motherId === sp.motherId)),
+      );
+
+      return {
+        spouse: sp,
+        parents,
+        father,
+        mother,
+        siblings,
+      };
+    });
+
     return relatives;
   };
 
@@ -145,27 +186,96 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
   let allLinks = [];
   const uncleAuntMap = {};
 
+  const renderedIds = new Set();
+  const nodePositions = {};
+
+  const addNode = (nodeData, x, y) => {
+    nodePositions[nodeData.id] = { x, y };
+    if (renderedIds.has(nodeData.id)) return false;
+    renderedIds.add(nodeData.id);
+    allNodes.push({ data: nodeData, x, y });
+    return true;
+  };
+
+  const parentsY = -Y_SPACING;
+
   // 1. Center: Focal Node & Spouse
-  allNodes.push({ data: focalNode, x: 0, y: 0 });
-  relatives.spouse.forEach((s, i) => {
-    const sx = (i + 1) * X_SPACING;
-    allNodes.push({ data: s, x: sx, y: 0 });
-    // Link to focal (spouse line)
+  addNode(focalNode, 0, 0);
+
+  let currentSpouseX = X_SPACING;
+  let lastSpouseX = 0;
+
+  relatives.spouseInfo.forEach((spInfo) => {
+    const sx = currentSpouseX + X_SPACING;
+    addNode(spInfo.spouse, sx, 0);
+
+    // Link to previous spouse/focal in the spouse chain
     allLinks.push({
-      source: { x: i === 0 ? 0 : i * X_SPACING, y: 0 },
+      source: { x: lastSpouseX, y: 0 },
       target: { x: sx, y: 0 },
       isSpouse: true,
+      isFocalSpouse: true,
     });
+    lastSpouseX = sx;
+
+    // Layout spouse's parents (above the spouse)
+    const spParents = spInfo.parents;
+    spParents.forEach((p, pi) => {
+      let px;
+      if (spParents.length === 1) {
+        px = sx;
+      } else {
+        px = pi === 0 ? sx - X_SPACING / 2 : sx + X_SPACING / 2;
+      }
+      addNode(p, px, parentsY);
+
+      allLinks.push({
+        source: { x: px, y: parentsY },
+        target: { x: sx, y: 0 },
+        isPaternal: spInfo.father && p.id === spInfo.father.id,
+      });
+    });
+
+    // Draw spouse line between spouse's parents if both exist
+    if (spParents.length === 2) {
+      allLinks.push({
+        source: { x: sx - X_SPACING / 2, y: parentsY },
+        target: { x: sx + X_SPACING / 2, y: parentsY },
+        isSpouse: true,
+      });
+    }
+
+    // Layout spouse's siblings (to the right of the spouse)
+    spInfo.siblings.forEach((sib, sj) => {
+      const sibx = sx + (sj + 1) * X_SPACING;
+      addNode(sib, sibx, 0);
+
+      // Connect sibling to spouse's parents
+      spParents.forEach((p, pi) => {
+        let px;
+        if (spParents.length === 1) {
+          px = sx;
+        } else {
+          px = pi === 0 ? sx - X_SPACING / 2 : sx + X_SPACING / 2;
+        }
+        allLinks.push({
+          source: { x: px, y: parentsY },
+          target: { x: sibx, y: 0 },
+        });
+      });
+    });
+
+    // Advance currentSpouseX for the next spouse (if any)
+    currentSpouseX = sx + (spInfo.siblings.length + 1) * X_SPACING;
   });
 
   // 2. Parents (Above)
-  const parentsY = -Y_SPACING;
   const fatherNode = focalNode.fatherId ? data.find((d) => d.id === focalNode.fatherId) : null;
   relatives.parents.forEach((p, i) => {
     if (!p) return;
     const px = i === 0 ? -X_SPACING / 2 : X_SPACING / 2;
     const isFather = fatherNode && p.id === fatherNode.id;
-    allNodes.push({ data: p, x: px, y: parentsY });
+    addNode(p, px, parentsY);
     allLinks.push({
       source: { x: px, y: parentsY },
       target: { x: 0, y: 0 },
@@ -184,24 +294,43 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
 
   // 3. Grandparents (Above Parents)
   const gpY = -Y_SPACING * 2;
+  const gpGroups = {};
   relatives.grandparents.forEach((gp, i) => {
     if (!gp) return;
-    // Position relative to their children (the parents)
-    const parentIdx = relatives.parents.findIndex(
-      (p) => p && (gp.id === p.fatherId || gp.id === p.motherId),
-    );
-    const baseX = parentIdx === 0 ? -X_SPACING / 2 : X_SPACING / 2;
+    // Position relative to their children (the parents) using precomputed parentIdx
+    const parentIdx = gp.parentIdx !== undefined ? gp.parentIdx : -1;
+    const grandparentBaseX = parentIdx === 0 ? -X_SPACING : X_SPACING;
+    const parentActualX = parentIdx === 0 ? -X_SPACING / 2 : X_SPACING / 2;
     const gpx =
-      baseX + (gp.gender === "female" ? X_SPACING / 3 : -X_SPACING / 3);
+      grandparentBaseX + (gp.gender === "female" ? X_SPACING / 3 : -X_SPACING / 3);
 
     const isPaternalGF = fatherNode && gp.id === fatherNode.fatherId;
 
-    allNodes.push({ data: gp, x: gpx, y: gpY });
+    addNode(gp, gpx, gpY);
     allLinks.push({
       source: { x: gpx, y: gpY },
-      target: { x: baseX, y: parentsY },
+      target: { x: parentActualX, y: parentsY },
       isPaternal: isPaternalGF,
     });
+
+    if (parentIdx !== -1) {
+      if (!gpGroups[parentIdx]) gpGroups[parentIdx] = [];
+      gpGroups[parentIdx].push(gp);
+    }
+  });
+
+  // Draw spouse lines between grandparents if both exist
+  Object.keys(gpGroups).forEach((parentIdxStr) => {
+    const parentIdx = parseInt(parentIdxStr);
+    const gpList = gpGroups[parentIdx];
+    if (gpList.length === 2) {
+      const grandparentBaseX = parentIdx === 0 ? -X_SPACING : X_SPACING;
+      allLinks.push({
+        source: { x: grandparentBaseX - X_SPACING / 3, y: gpY },
+        target: { x: grandparentBaseX + X_SPACING / 3, y: gpY },
+        isSpouse: true,
+      });
+    }
   });
 
   // 4. Paternal Line extension (Above Grandparents)
@@ -214,7 +343,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
       let currentAncY = gpY - Y_SPACING;
 
       relatives.paternalAncestors.forEach((anc, i) => {
-        allNodes.push({ data: anc, x: baseX, y: currentAncY });
+        addNode(anc, baseX, currentAncY);
         const targetY = i === 0 ? gpY : currentAncY + Y_SPACING;
         allLinks.push({
           source: { x: baseX, y: currentAncY },
@@ -230,7 +359,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
   // Paternal Uncles & Aunts (positioned to the left of father)
   relatives.paternalUnclesAunts.forEach((ua, i) => {
     const uax = -X_SPACING / 2 - X_SPACING * (i + 1);
-    allNodes.push({ data: ua, x: uax, y: parentsY });
+    addNode(ua, uax, parentsY);
     uncleAuntMap[ua.id] = uax;
 
     // Connect to paternal grandparents (FF/FM)
@@ -251,7 +380,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
   // Maternal Uncles & Aunts (positioned to the right of mother)
   relatives.maternalUnclesAunts.forEach((ua, i) => {
     const uax = X_SPACING / 2 + X_SPACING * (i + 1);
-    allNodes.push({ data: ua, x: uax, y: parentsY });
+    addNode(ua, uax, parentsY);
     uncleAuntMap[ua.id] = uax;
 
     // Connect to maternal grandparents (MF/MM)
@@ -272,7 +401,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
   // 5. Siblings (Beside Focal)
   relatives.siblings.forEach((sib, i) => {
     const sibx = -X_SPACING - i * X_SPACING;
-    allNodes.push({ data: sib, x: sibx, y: 0 });
+    addNode(sib, sibx, 0);
     // Connect siblings to parents if parents exist
     relatives.parents.forEach((p, pi) => {
       if (!p) return;
@@ -289,20 +418,21 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
   const childOffset = ((relatives.children.length - 1) * X_SPACING) / 2;
   relatives.children.forEach((c, i) => {
     const cx = i * X_SPACING - childOffset;
-    allNodes.push({ data: c, x: cx, y: childrenY });
+    addNode(c, cx, childrenY);
 
     // Connect to both parents if they are the focal or focal's spouse
     allLinks.push({
       source: { x: 0, y: 0 },
       target: { x: cx, y: childrenY },
     });
-    relatives.spouse.forEach((s, si) => {
+    relatives.spouse.forEach((s) => {
       // Since motherId isn't stored in JSON, we assume that if the child is a child of the focalNode,
       // and s is the spouse of the focalNode, s is the other parent of the child.
       const isParentOfChild = c.fatherId === focalNode.id || c.motherId === focalNode.id || c.fatherId === s.id || c.motherId === s.id;
       if (isParentOfChild) {
+        const spousePos = nodePositions[s.id] || { x: X_SPACING, y: 0 };
         allLinks.push({
-          source: { x: (si + 1) * X_SPACING, y: 0 },
+          source: { x: spousePos.x, y: 0 },
           target: { x: cx, y: childrenY },
         });
       }
@@ -337,7 +467,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
       const spacing = X_SPACING / 1.5;
       const gcx = parentX + (idx - (gcList.length - 1) / 2) * spacing;
 
-      allNodes.push({ data: gc, x: gcx, y: gchildrenY });
+      addNode(gc, gcx, gchildrenY);
       allLinks.push({
         source: { x: parentX, y: childrenY },
         target: { x: gcx, y: gchildrenY },
@@ -368,7 +498,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
       cousinsList.forEach((c, idx) => {
         const spacing = X_SPACING / 1.5;
         const cx = parentX + (idx - (cousinsList.length - 1) / 2) * spacing;
-        allNodes.push({ data: c, x: cx, y: 0 });
+        addNode(c, cx, 0);
 
         // Connect Cousin to Uncle/Aunt parent
         allLinks.push({
@@ -381,7 +511,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
       cousinsList.forEach((c, idx) => {
         const side = idx % 2 === 0 ? 1 : -1;
         const cx = side * (X_SPACING * 3 + idx * X_SPACING);
-        allNodes.push({ data: c, x: cx, y: 0 });
+        addNode(c, cx, 0);
       });
     }
   });
@@ -442,10 +572,7 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
               <path
                 key={`link-${i}`}
                 d={path}
-                className={`tree-link ${link.isSpouse ? "spouse-link" : ""} ${link.isPaternal ? "paternal-link" : ""}`}
-                style={
-                  link.isSpouse ? { strokeDasharray: "4 4", opacity: 0.5 } : {}
-                }
+                className={`tree-link ${link.isSpouse ? "spouse-link" : ""} ${link.isFocalSpouse ? "focal-spouse-link" : ""} ${link.isPaternal ? "paternal-link" : ""}`}
               />
             );
           })}

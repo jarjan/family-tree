@@ -143,3 +143,25 @@
   color: #000000;
   text-decoration: underline;
 }
+
+.spouse-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0 !important;
+}
+
+.spouse-main {
+  font-weight: 500;
+}
+
+.spouse-relatives {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding-left: 0.5rem;
+}
+
+.spouse-relatives-label {
+  font-weight: 500;
+  color: var(--text-muted);
+}

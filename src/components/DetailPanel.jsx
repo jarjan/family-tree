@@ -12,13 +12,19 @@ export function DetailPanel({ node, allData, onSelect, onClose }) {
   const grandparents = [];
   if (father) {
     const ff = allData.find((d) => d.id === father.fatherId);
-    const fm = allData.find((d) => d.id === father.motherId);
+    let fm = null;
+    if (ff) {
+      fm = allData.find((d) => d.spouseOf === ff.id || (ff.spouseOf && d.id === ff.spouseOf));
+    }
     if (ff) grandparents.push(ff);
     if (fm) grandparents.push(fm);
   }
   if (mother) {
     const mf = allData.find((d) => d.id === mother.fatherId);
-    const mm = allData.find((d) => d.id === mother.motherId);
+    let mm = null;
+    if (mf) {
+      mm = allData.find((d) => d.spouseOf === mf.id || (mf.spouseOf && d.id === mf.spouseOf));
+    }
     if (mf) grandparents.push(mf);
     if (mm) grandparents.push(mm);
   }
@@ -180,11 +186,55 @@ export function DetailPanel({ node, allData, onSelect, onClose }) {
           <div className="info-group">
             <h4>{t("spouse")}</h4>
             <ul className="children-list">
-              {spouses.map((s) => (
-                <li key={s.id}>
-                  <RelativeLink rel={s} />
-                </li>
-              ))}
+              {spouses.map((s) => {
+                let father = s.fatherId ? allData.find((d) => d.id === s.fatherId) : null;
+                let mother = s.motherId ? allData.find((d) => d.id === s.motherId) : null;
+                if (father && !mother) {
+                  mother = allData.find((d) => d.spouseOf === father.id || (father.spouseOf && d.id === father.spouseOf));
+                } else if (mother && !father) {
+                  father = allData.find((d) => d.spouseOf === mother.id || (mother.spouseOf && d.id === mother.spouseOf));
+                }
+                const parents = [];
+                if (father) parents.push(father);
+                if (mother) parents.push(mother);
+
+                const siblings = allData.filter(
+                  (d) =>
+                    d.id !== s.id &&
+                    ((s.fatherId && d.fatherId === s.fatherId) ||
+                      (s.motherId && d.motherId === s.motherId)),
+                );
+
+                return (
+                  <li key={s.id} className="spouse-item">
+                    <div className="spouse-main">
+                      <RelativeLink rel={s} />
+                    </div>
+                    {parents.length > 0 && (
+                      <div className="spouse-relatives">
+                        <span className="spouse-relatives-label">{t("spouseParents")}: </span>
+                        {parents.map((p, idx) => (
+                          <span key={p.id}>
+                            <RelativeLink rel={p} />
+                            {idx < parents.length - 1 ? ", " : ""}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {siblings.length > 0 && (
+                      <div className="spouse-relatives">
+                        <span className="spouse-relatives-label">{t("spouseSiblings")}: </span>
+                        {siblings.map((sib, idx) => (
+                          <span key={sib.id}>
+                            <RelativeLink rel={sib} />
+                            {idx < siblings.length - 1 ? ", " : ""}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
