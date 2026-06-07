@@ -1,6 +1,7 @@
 import { useState, useRef } from "preact/hooks";
 import * as d3 from "d3-hierarchy";
 import { MemberNode } from "./MemberNode.jsx";
+import { t } from "../utils/i18n.js";
 import "./TreeCanvas.css";
 
 export function TreeCanvas({ data, onSelect, selectedId }) {
@@ -543,6 +544,18 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
     setTransform((prev) => ({ ...prev, scale: newScale }));
   };
 
+  const zoomIn = () => {
+    setTransform((prev) => ({ ...prev, scale: Math.min(3, prev.scale + 0.1) }));
+  };
+
+  const zoomOut = () => {
+    setTransform((prev) => ({ ...prev, scale: Math.max(0.1, prev.scale - 0.1) }));
+  };
+
+  const resetViewport = () => {
+    setTransform({ x: 0, y: 0, scale: 1 });
+  };
+
   return (
     <div
       className="canvas-container"
@@ -604,6 +617,18 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="canvas-controls glass">
+        <button className="control-btn" onClick={zoomIn} title={t("zoomIn")}>
+          +
+        </button>
+        <button className="control-btn" onClick={zoomOut} title={t("zoomOut")}>
+          −
+        </button>
+        <button className="control-btn reset-btn" onClick={resetViewport} title={t("resetZoom")}>
+          ⌖
+        </button>
       </div>
     </div>
   );
