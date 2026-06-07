@@ -1,337 +1,377 @@
 [
   {
-    "id": "6d3661",
     "name": "Кіші жүз",
+    "id": "kishi-zhuz",
     "fatherId": null
   },
   {
-    "id": "4a16a3",
     "name": "Байсары",
-    "fatherId": "6d3661"
+    "id": "baysary-kishi-zhuz",
+    "fatherId": "kishi-zhuz"
   },
   {
-    "id": "70eef4",
     "name": "Әлім",
-    "fatherId": "6d3661"
+    "id": "alim-kishi-zhuz",
+    "fatherId": "kishi-zhuz"
   },
   {
-    "id": "0abbd8",
     "name": "Жаманақ (Шекті)",
-    "fatherId": "70eef4"
+    "id": "zhamanaq-shekti-alim",
+    "fatherId": "alim-kishi-zhuz"
   },
   {
-    "id": "62765b",
     "name": "Шыңғыс",
-    "fatherId": "0abbd8"
+    "id": "shyngys-zhamanaq-shekti",
+    "fatherId": "zhamanaq-shekti-alim"
   },
   {
-    "id": "338cd4",
     "name": "Өріс",
-    "fatherId": "0abbd8"
+    "id": "oris-zhamanaq-shekti",
+    "fatherId": "zhamanaq-shekti-alim"
   },
   {
-    "id": "d4cb7d",
     "name": "Айдарбек",
-    "fatherId": "338cd4"
+    "id": "aydarbek-oris",
+    "fatherId": "oris-zhamanaq-shekti"
   },
   {
-    "id": "aecd9e",
     "name": "Есеналы",
-    "fatherId": "338cd4"
+    "id": "esenaly-oris",
+    "fatherId": "oris-zhamanaq-shekti"
   },
   {
-    "id": "7afadd",
     "name": "Палуан",
-    "fatherId": "aecd9e"
+    "id": "paluan-esenaly",
+    "fatherId": "esenaly-oris"
   },
   {
-    "id": "0512be",
     "name": "Кішкене",
-    "fatherId": "aecd9e"
+    "id": "kishkene-esenaly",
+    "fatherId": "esenaly-oris"
   },
   {
-    "id": "9a8809",
     "name": "Жиеней",
-    "fatherId": "0512be"
+    "id": "zhieney-kishkene",
+    "fatherId": "kishkene-esenaly"
   },
   {
-    "id": "be73bb",
     "name": "Жолшара",
-    "fatherId": "0512be"
+    "id": "zholshara-kishkene",
+    "fatherId": "kishkene-esenaly"
   },
   {
-    "id": "fe29bb",
     "name": "Асан",
-    "fatherId": "0512be"
+    "id": "asan-kishkene",
+    "fatherId": "kishkene-esenaly"
   },
   {
-    "id": "16edbf",
     "name": "Сырлыбай",
-    "fatherId": "fe29bb"
+    "id": "syrlybay-asan",
+    "fatherId": "asan-kishkene"
   },
   {
-    "id": "4b60fa",
     "name": "Мәтіғұл",
-    "fatherId": "16edbf"
+    "id": "matigul-syrlybay",
+    "fatherId": "syrlybay-asan"
   },
   {
-    "id": "5fdb63",
     "name": "Нұрбай",
-    "fatherId": "4b60fa"
+    "id": "nurbay-matigul",
+    "fatherId": "matigul-syrlybay"
   },
   {
-    "id": "0284b2",
     "name": "Абыла",
-    "fatherId": "5fdb63"
+    "id": "abyla-nurbay",
+    "fatherId": "nurbay-matigul"
   },
   {
-    "id": "e1356b",
     "name": "Досымбет",
-    "fatherId": "0284b2"
+    "id": "dosymbet-abyla",
+    "fatherId": "abyla-nurbay"
   },
   {
-    "id": "77f272",
     "name": "Үмбетәлі",
-    "fatherId": "e1356b"
+    "id": "umbetali-dosymbet",
+    "fatherId": "dosymbet-abyla"
   },
   {
-    "id": "be18df",
     "name": "Қуат",
-    "fatherId": "77f272"
+    "id": "quat-umbetali",
+    "fatherId": "umbetali-dosymbet"
   },
   {
-    "id": "96ed9e",
     "name": "Қулмұрат",
-    "fatherId": "be18df"
+    "id": "qulmurat-quat",
+    "fatherId": "quat-umbetali"
   },
   {
-    "id": "af7c47",
     "name": "Көшербай",
-    "fatherId": "96ed9e"
+    "id": "kosherbay-qulmurat",
+    "fatherId": "qulmurat-quat"
   },
   {
-    "id": "a4f469",
     "name": "Жүсіп",
-    "fatherId": "be18df"
+    "id": "zhusip-quat",
+    "fatherId": "quat-umbetali"
   },
   {
-    "id": "66a3aa",
     "name": "Қали",
-    "fatherId": "be18df"
+    "id": "qali-quat",
+    "fatherId": "quat-umbetali"
   },
   {
-    "id": "e50fad",
     "name": "Қабыл",
-    "fatherId": "be18df"
+    "id": "qabyl-quat",
+    "fatherId": "quat-umbetali"
   },
   {
-    "id": "90e6ed",
     "name": "Қобылаш",
-    "fatherId": "77f272"
+    "id": "qobylash-umbetali",
+    "fatherId": "umbetali-dosymbet"
   },
   {
-    "id": "a4dbfe",
     "name": "Құлахмет",
-    "fatherId": "90e6ed"
+    "id": "qulakhmet-qobylash",
+    "fatherId": "qobylash-umbetali"
   },
   {
-    "id": "162640",
     "name": "Құлмағанбет",
-    "fatherId": "90e6ed"
+    "id": "qulmaganbet-qobylash",
+    "fatherId": "qobylash-umbetali"
   },
   {
-    "id": "181de1",
     "name": "Темірхан",
-    "fatherId": "162640"
+    "id": "temirkhan-qulmaganbet",
+    "fatherId": "qulmaganbet-qobylash"
   },
   {
-    "id": "850e70",
     "name": "Сейтәлі",
-    "fatherId": "77f272"
+    "id": "seytali-umbetali",
+    "fatherId": "umbetali-dosymbet"
   },
   {
-    "id": "0d4e11",
     "name": "Сейтәлі",
-    "fatherId": "850e70"
+    "id": "seytali-seytali",
+    "fatherId": "seytali-umbetali"
   },
   {
-    "id": "302439",
     "name": "Әжарқын",
-    "fatherId": "0d4e11"
+    "id": "azharqyn-seytali",
+    "fatherId": "seytali-seytali"
   },
   {
-    "id": "77f7a7",
     "name": "Онталап",
-    "fatherId": "0d4e11"
+    "id": "ontalap-seytali",
+    "fatherId": "seytali-seytali"
   },
   {
-    "id": "20b0e8",
     "name": "Ондас",
-    "fatherId": "0d4e11"
+    "id": "ondas-seytali",
+    "fatherId": "seytali-seytali"
   },
   {
-    "id": "ca0221",
     "name": "Қапақ",
-    "fatherId": "77f272"
+    "id": "qapaq-umbetali",
+    "fatherId": "umbetali-dosymbet"
   },
   {
-    "id": "12ee5f",
     "name": "Құттыбек",
-    "fatherId": "77f272"
+    "id": "quttybek-umbetali",
+    "fatherId": "umbetali-dosymbet"
   },
   {
-    "id": "254715",
     "name": "Құлмырза",
-    "fatherId": "77f272"
+    "id": "qulmyrza-umbetali",
+    "fatherId": "umbetali-dosymbet"
   },
   {
-    "id": "5d43fd",
     "name": "Пермебай",
-    "fatherId": "254715"
+    "id": "permebay-qulmyrza",
+    "fatherId": "qulmyrza-umbetali"
   },
   {
-    "id": "af5cab",
     "name": "Серік",
-    "lastName": "Құлмырза",
-    "fatherId": "5d43fd"
+    "id": "serik-permebay",
+    "fatherId": "permebay-qulmyrza",
+    "lastName": "Құлмырза"
   },
   {
-    "id": "54jk33",
     "name": "Алтынай",
-    "lastName": "Сартабанова",
     "gender": "female",
-    "spouseOf": "af5cab"
+    "spouseOf": "serik-permebay",
+    "fatherId": null,
+    "id": "altynay-serik-permebay",
+    "lastName": "Сартабанова"
   },
   {
-    "id": "dfc08e",
     "name": "Жаржан",
+    "id": "zharzhan-serik",
+    "fatherId": "serik-permebay",
     "lastName": "Құлмырза",
     "birthday": "1991-11-03",
-    "notes": "Бағдарламашы (Software Engineer). Әулет шежіресін құрастырушы.",
-    "fatherId": "af5cab"
+    "notes": "Бағдарламашы (Software Engineer). Әулет шежіресін құрастырушы."
   },
   {
-    "id": "df0vdf",
+    "name": "Диас",
+    "id": "dias-zharzhan",
+    "fatherId": "zharzhan-serik",
+    "lastName": "Серік"
+  },
+  {
+    "name": "Сафия",
+    "id": "safiya-zharzhan",
+    "fatherId": "zharzhan-serik",
+    "lastName": "Серік",
+    "gender": "female"
+  },
+  {
     "name": "Риза",
+    "id": "riza-serik",
+    "fatherId": "serik-permebay",
     "lastName": "Құлмырза",
-    "birthday": "1996-02-09",
     "gender": "female",
-    "fatherId": "af5cab"
+    "birthday": "1996-02-09"
   },
   {
-    "id": "890vdf",
     "name": "Малика",
+    "id": "malika-serik",
+    "fatherId": "serik-permebay",
     "lastName": "Құлмырза",
-    "birthday": "2005-01-07",
     "gender": "female",
-    "fatherId": "af5cab"
+    "birthday": "2005-01-07"
   },
   {
-    "id": "54e9а3",
+    "name": "Болат",
+    "id": "bolat-permebay",
+    "fatherId": "permebay-qulmyrza",
+    "lastName": "Құлмырза"
+  },
+  {
+    "name": "Дәулетияр",
+    "id": "dauletiyar-syrlybay",
+    "fatherId": "syrlybay-asan"
+  },
+  {
+    "name": "Аташ",
+    "id": "atash-syrlybay",
+    "fatherId": "syrlybay-asan"
+  },
+  {
+    "name": "Баймырза",
+    "id": "baymyrza-syrlybay",
+    "fatherId": "syrlybay-asan"
+  },
+  {
+    "name": "Мәметек",
+    "id": "mametek-syrlybay",
+    "fatherId": "syrlybay-asan"
+  },
+  {
+    "name": "Өтеп",
+    "id": "otep-asan",
+    "fatherId": "asan-kishkene"
+  },
+  {
+    "name": "Қожамберлі",
+    "id": "qozhamberli-asan",
+    "fatherId": "asan-kishkene"
+  },
+  {
+    "name": "Құдайназар",
+    "id": "qudaynazar-asan",
+    "fatherId": "asan-kishkene"
+  },
+  {
+    "name": "Үсен",
+    "id": "usen-kishkene",
+    "fatherId": "kishkene-esenaly"
+  },
+  {
+    "name": "Баубек",
+    "id": "baubek-zhamanaq-shekti",
+    "fatherId": "zhamanaq-shekti-alim"
+  },
+  {
+    "name": "Қарамашақ",
+    "id": "qaramashaq-alim",
+    "fatherId": "alim-kishi-zhuz"
+  },
+  {
+    "name": "Айнақ",
+    "id": "aynaq-alim",
+    "fatherId": "alim-kishi-zhuz"
+  },
+  {
+    "name": "Тегінболат",
+    "id": "teginbolat-alim",
+    "fatherId": "alim-kishi-zhuz"
+  },
+  {
+    "name": "Тойқожа",
+    "id": "toyqozha-alim",
+    "fatherId": "alim-kishi-zhuz"
+  },
+  {
+    "name": "Ұланақ",
+    "id": "ulanaq-alim",
+    "fatherId": "alim-kishi-zhuz"
+  },
+  {
+    "name": "Шөмен",
+    "id": "shomen-kishi-zhuz",
+    "fatherId": "kishi-zhuz"
+  },
+  {
+    "name": "Ералы",
+    "id": "eraly",
+    "fatherId": null,
+    "lastName": "Дадабаев"
+  },
+  {
     "name": "Берік",
-    "lastName": "Дадабаев",
-    "gender": "male"
+    "id": "berik-eraly",
+    "fatherId": "eraly",
+    "lastName": "Дадабаев"
   },
   {
-    "id": "54e933",
+    "name": "Сандуғаш",
+    "gender": "female",
+    "spouseOf": "berik-eraly",
+    "fatherId": null,
+    "id": "sandugash-berik-eraly",
+    "lastName": "Кенжебаева"
+  },
+  {
     "name": "Мереке",
+    "id": "mereke-berik",
+    "fatherId": "berik-eraly",
     "lastName": "Дадабаева",
     "gender": "female",
-    "spouseOf": "dfc08e",
-    "fatherId": "54e9а3"
+    "birthday": "1994-05-09",
+    "spouseOf": "zharzhan-serik"
   },
   {
-    "id": "c1ee1a",
-    "name": "Диас",
-    "lastName": "Серік",
-    "fatherId": "dfc08e"
-  },
-  {
-    "id": "0284b5",
-    "name": "Сафия",
-    "lastName": "Серік",
+    "name": "Анар",
+    "id": "anar-berik",
+    "fatherId": "berik-eraly",
+    "lastName": "Дадабаева",
     "gender": "female",
-    "fatherId": "dfc08e"
+    "birthday": "1997-08-26"
   },
   {
-    "id": "ea38a9",
-    "name": "Болат",
-    "lastName": "Құлмырза",
-    "fatherId": "5d43fd"
+    "name": "Аружан",
+    "id": "aruzhan-berik",
+    "fatherId": "berik-eraly",
+    "lastName": "Дадабаева",
+    "gender": "female",
+    "birthday": "2000-08-24"
   },
   {
-    "id": "fa6006",
-    "name": "Дәулетияр",
-    "fatherId": "16edbf"
-  },
-  {
-    "id": "1b19e5",
-    "name": "Аташ",
-    "fatherId": "16edbf"
-  },
-  {
-    "id": "bf64f9",
-    "name": "Баймырза",
-    "fatherId": "16edbf"
-  },
-  {
-    "id": "77c67c",
-    "name": "Мәметек",
-    "fatherId": "16edbf"
-  },
-  {
-    "id": "7e7c7b",
-    "name": "Өтеп",
-    "fatherId": "fe29bb"
-  },
-  {
-    "id": "8c17ce",
-    "name": "Қожамберлі",
-    "fatherId": "fe29bb"
-  },
-  {
-    "id": "925d94",
-    "name": "Құдайназар",
-    "fatherId": "fe29bb"
-  },
-  {
-    "id": "54f3ef",
-    "name": "Үсен",
-    "fatherId": "0512be"
-  },
-  {
-    "id": "7f28c7",
-    "name": "Баубек",
-    "fatherId": "0abbd8"
-  },
-  {
-    "id": "6d27c9",
-    "name": "Қарамашақ",
-    "fatherId": "70eef4"
-  },
-  {
-    "id": "41ef30",
-    "name": "Айнақ",
-    "fatherId": "70eef4"
-  },
-  {
-    "id": "e10d7b",
-    "name": "Тегінболат",
-    "fatherId": "70eef4"
-  },
-  {
-    "id": "1a90e1",
-    "name": "Тойқожа",
-    "fatherId": "70eef4"
-  },
-  {
-    "id": "7fac3b",
-    "name": "Ұланақ",
-    "fatherId": "70eef4"
-  },
-  {
-    "id": "f1458b",
-    "name": "Шөмен",
-    "fatherId": "6d3661"
+    "name": "Рания",
+    "id": "raniya-berik",
+    "fatherId": "berik-eraly",
+    "lastName": "Дадабаева",
+    "gender": "female",
+    "birthday": "2009-01-19"
   }
 ]

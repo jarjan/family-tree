@@ -32,7 +32,8 @@ This project provides a dynamic and responsive visualization of family lineages,
 │   ├── pages/         # Astro pages (entry point)
 │   ├── utils/         # i18n and helper functions
 │   └── styles/        # Global CSS
-├── migrate.py         # Python script for generating UUIDs and updating relations
+├── compile.py         # Python script for compiling family.txt to family.json
+├── family.txt         # Indented family tree text representation (source of truth)
 └── astro.config.mjs   # Astro configuration (base path, integrations)
 ```
 
@@ -41,7 +42,7 @@ This project provides a dynamic and responsive visualization of family lineages,
 ### Prerequisites
 
 - **Node.js:** `^22.12.0` (as specified in `package.json`)
-- **Python:** (Optional, for running `migrate.py`)
+- **Python:** (Optional, for running `compile.py`)
 
 ### Installation
 
@@ -61,7 +62,7 @@ npm install
 
 The family tree data is stored in `src/data/family.json`. Each member is an object with the following potential fields:
 
-- `id`: Unique identifier (UUID).
+- `id`: Unique identifier (readable slug).
 - `name`: First name.
 - `lastName`: Last name.
 - `fatherId`: ID of the father.
@@ -71,13 +72,14 @@ The family tree data is stored in `src/data/family.json`. Each member is an obje
 - `birthday`: `YYYY-MM-DD`.
 - `notes`: Additional biographical details.
 
-### Data Migration
+### Data Compilation
 
-To automatically generate UUIDs and maintain relationship integrity, you can use the provided Python script:
-
-```sh
-python3 migrate.py
-```
+To edit the family tree data:
+1. Open and modify [family.txt](file:///Users/jarjan/Desktop/dev/family-tree/family.txt) (the source of truth).
+2. Compile your changes to JSON:
+   ```sh
+   python3 compile.py
+   ```
 
 ## 🚀 Deployment
 
