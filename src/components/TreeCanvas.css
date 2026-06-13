@@ -4,6 +4,7 @@
   cursor: grab;
   position: relative;
   overflow: hidden;
+  --canvas-center-y: 50vh;
 }
 
 .canvas-container:active {
@@ -87,4 +88,30 @@
 
 .control-btn.reset-btn {
   font-size: 1.3rem;
+}
+
+@media (max-width: 767px) {
+  .canvas-container.has-selected {
+    /* Shift center upward to leave space for the bottom sheet */
+    --canvas-center-y: 20vh;
+  }
+
+  .canvas-controls {
+    bottom: 1.5rem;
+    left: 1rem;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.4rem;
+    transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .canvas-container.has-selected .canvas-controls {
+    bottom: calc(60vh + 1rem);
+  }
+
+  .control-btn {
+    width: 42px;
+    height: 42px;
+    font-size: 1.4rem;
+  }
 }

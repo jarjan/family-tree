@@ -11,6 +11,7 @@ export function TreeApp() {
   const defaultFocus =
     familyData.find((d) => d.name === "Жаржан")?.id || familyData[0].id;
   const [selectedNodeId, setSelectedNodeId] = useState(defaultFocus);
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
 
   // Apply language change
   useEffect(() => {
@@ -18,6 +19,11 @@ export function TreeApp() {
   }, [lang]);
 
   const selectedNode = familyData.find((n) => n.id === selectedNodeId);
+
+  const handleSelect = (id) => {
+    setSelectedNodeId(id);
+    setIsPanelOpen(true);
+  };
 
   return (
     <div className="app-container">
@@ -42,16 +48,17 @@ export function TreeApp() {
       <main className="app-main">
         <TreeCanvas
           data={familyData}
-          onSelect={setSelectedNodeId}
+          onSelect={handleSelect}
           selectedId={selectedNodeId}
+          isPanelOpen={isPanelOpen}
         />
 
-        {selectedNodeId && (
+        {isPanelOpen && selectedNode && (
           <DetailPanel
             node={selectedNode}
             allData={familyData}
-            onSelect={setSelectedNodeId}
-            onClose={() => setSelectedNodeId(null)}
+            onSelect={handleSelect}
+            onClose={() => setIsPanelOpen(false)}
           />
         )}
       </main>

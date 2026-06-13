@@ -4,10 +4,12 @@ import { MemberNode } from "./MemberNode.jsx";
 import { t } from "../utils/i18n.js";
 import "./TreeCanvas.css";
 
-export function TreeCanvas({ data, onSelect, selectedId }) {
+export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
+  const touchZoomStartDist = useRef(null);
+  const touchZoomStartScale = useRef(1);
 
   const getRelatives = (data, focalNode) => {
     const relatives = {
@@ -544,6 +546,51 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
     setTransform((prev) => ({ ...prev, scale: newScale }));
   };
 
+  // Touch event handlers for mobile support (drag and pinch-to-zoom)
+  const onTouchStart = (e) => {
+    if (e.touches.length === 1) {
+      isDragging.current = true;
+      dragStart.current = {
+        x: e.touches[0].clientX - transform.x,
+        y: e.touches[0].clientY - transform.y,
+      };
+    } else if (e.touches.length === 2) {
+      isDragging.current = false;
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      touchZoomStartDist.current = dist;
+      touchZoomStartScale.current = transform.scale;
+    }
+  };
+
+  const onTouchMove = (e) => {
+    if (e.touches.length === 1 && isDragging.current) {
+      setTransform((prev) => ({
+        ...prev,
+        x: e.touches[0].clientX - dragStart.current.x,
+        y: e.touches[0].clientY - dragStart.current.y,
+      }));
+    } else if (e.touches.length === 2 && touchZoomStartDist.current) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const factor = dist / touchZoomStartDist.current;
+      const newScale = Math.min(
+        Math.max(0.1, touchZoomStartScale.current * factor),
+        3
+      );
+      setTransform((prev) => ({ ...prev, scale: newScale }));
+    }
+  };
+
+  const onTouchEnd = () => {
+    isDragging.current = false;
+    touchZoomStartDist.current = null;
+  };
+
   const zoomIn = () => {
     setTransform((prev) => ({ ...prev, scale: Math.min(3, prev.scale + 0.1) }));
   };
@@ -558,18 +605,22 @@ export function TreeCanvas({ data, onSelect, selectedId }) {
 
   return (
     <div
-      className="canvas-container"
+      className={`canvas-container ${selectedId && isPanelOpen ? "has-selected" : ""}`}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
       onWheel={onWheel}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchEnd}
     >
       <div
         className="canvas-layer"
         style={{
-          transform: `translate(calc(50vw + ${transform.x}px), calc(50vh + ${transform.y}px)) scale(${transform.scale})`,
-          transition: isDragging.current ? "none" : "transform 0.1s ease",
+          transform: `translate(calc(50vw + ${transform.x}px), calc(var(--canvas-center-y, 50vh) + ${transform.y}px)) scale(${transform.scale})`,
+          transition: (isDragging.current || touchZoomStartDist.current) ? "none" : "transform 0.1s ease",
         }}
       >
         <svg

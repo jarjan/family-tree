@@ -93,6 +93,7 @@ export function DetailPanel({ node, allData, onSelect, onClose }) {
 
   return (
     <div className="detail-panel glass">
+      <div className="panel-handle"></div>
       <button className="close-btn btn" onClick={onClose}>
         ×
       </button>
