@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useCallback } from "preact/hooks";
 import { TreeCanvas } from "./TreeCanvas.jsx";
 import { DetailPanel } from "./DetailPanel.jsx";
 import { setLanguage, t } from "../utils/i18n.js";
@@ -18,14 +18,20 @@ export function TreeApp() {
 
   const selectedNode = familyData.find((n) => n.id === selectedNodeId);
 
-  const handleSelect = (id) => {
-    if (selectedNodeId === id) {
-      setIsPanelOpen((prev) => !prev);
-    } else {
-      setSelectedNodeId(id);
-      setIsPanelOpen(true);
-    }
-  };
+  const handleSelect = useCallback((id) => {
+    setSelectedNodeId((prevSelectedId) => {
+      if (prevSelectedId === id) {
+        setIsPanelOpen((prevOpen) => !prevOpen);
+      } else {
+        setIsPanelOpen(true);
+      }
+      return id;
+    });
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setIsPanelOpen(false);
+  }, []);
 
   return (
     <div className="app-container">
@@ -61,7 +67,7 @@ export function TreeApp() {
             allData={familyData}
             onSelect={handleSelect}
             isOpen={isPanelOpen}
-            onClose={() => setIsPanelOpen(false)}
+            onClose={handleClose}
           />
         )}
       </main>

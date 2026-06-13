@@ -1,10 +1,11 @@
+import { useMemo } from "preact/hooks";
 import { t } from "../utils/i18n.js";
 import { getRelatives } from "../utils/relations.js";
 import "./DetailPanel.css";
 
 export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
   const {
-    spouses,
+    spouseInfo,
     father,
     mother,
     grandparents,
@@ -12,7 +13,8 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
     grandchildren,
     siblings,
     cousins: uniqueCousins
-  } = getRelatives(allData, node);
+  } = useMemo(() => getRelatives(allData, node), [allData, node]);
+
 
   const RelativeLink = ({ rel }) => {
     if (!rel) return <span>-</span>;
@@ -115,33 +117,15 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
           </div>
         )}
 
-        {spouses.length > 0 && (
+        {spouseInfo.length > 0 && (
           <div className="info-group">
             <h4>{t("spouse")}</h4>
             <ul className="children-list">
-              {spouses.map((s) => {
-                let father = s.fatherId ? allData.find((d) => d.id === s.fatherId) : null;
-                let mother = s.motherId ? allData.find((d) => d.id === s.motherId) : null;
-                if (father && !mother) {
-                  mother = allData.find((d) => d.spouseOf === father.id || (father.spouseOf && d.id === father.spouseOf));
-                } else if (mother && !father) {
-                  father = allData.find((d) => d.spouseOf === mother.id || (mother.spouseOf && d.id === mother.spouseOf));
-                }
-                const parents = [];
-                if (father) parents.push(father);
-                if (mother) parents.push(mother);
-
-                const siblings = allData.filter(
-                  (d) =>
-                    d.id !== s.id &&
-                    ((s.fatherId && d.fatherId === s.fatherId) ||
-                      (s.motherId && d.motherId === s.motherId)),
-                );
-
+              {spouseInfo.map(({ spouse, parents, siblings }) => {
                 return (
-                  <li key={s.id} className="spouse-item">
+                  <li key={spouse.id} className="spouse-item">
                     <div className="spouse-main">
-                      <RelativeLink rel={s} />
+                      <RelativeLink rel={spouse} />
                     </div>
                     {parents.length > 0 && (
                       <div className="spouse-relatives">
