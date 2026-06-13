@@ -100,7 +100,7 @@
     "fatherId": "umbetali-dosymbet"
   },
   {
-    "name": "Қулмұрат",
+    "name": "Құлмұрат",
     "id": "qulmurat-quat",
     "fatherId": "quat-umbetali"
   },
@@ -108,6 +108,11 @@
     "name": "Көшербай",
     "id": "kosherbay-qulmurat",
     "fatherId": "qulmurat-quat"
+  },
+  {
+    "name": "Бауыржан",
+    "id": "bauyrzhan-kosherbay",
+    "fatherId": "kosherbay-qulmurat"
   },
   {
     "name": "Жүсіп",

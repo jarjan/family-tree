@@ -381,6 +381,8 @@ export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
         key={`node-${node.data.id}-${idx}`}
         className="node-wrapper"
         style={{
+          position: "absolute",
+          transform: "translate(-50%, -50%)",
           left: `${node.x}px`,
           top: `${node.y}px`,
           "--z-index": node.data.id === selectedId ? 10 : 1,
@@ -539,16 +541,37 @@ export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
         ref={canvasLayerRef}
         className="canvas-layer"
         style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          transformOrigin: "0 0",
+          transform: `translate(calc(50vw + var(--tx, ${transform.x}px)), calc(var(--canvas-center-y, 50vh) + var(--ty, ${transform.y}px))) scale(var(--scale, ${transform.scale}))`,
+          transition: "var(--transition-style, transform 0.05s linear)",
           "--tx": `${transform.x}px`,
           "--ty": `${transform.y}px`,
           "--scale": transform.scale,
         }}
       >
-        <svg className="edges-layer">
+        <svg
+          className="edges-layer"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            overflow: "visible",
+          }}
+        >
           {renderedLinks}
         </svg>
 
-        <div className="nodes-layer">
+        <div
+          className="nodes-layer"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        >
           {renderedNodes}
         </div>
       </div>
