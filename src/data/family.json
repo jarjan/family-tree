@@ -201,21 +201,13 @@
     "lastName": "Құлмырза"
   },
   {
-    "name": "Алтынай",
-    "gender": "female",
-    "spouseOf": "serik-permebay",
-    "fatherId": null,
-    "id": "altynay-serik-permebay",
-    "lastName": "Сартабанова"
-  },
-  {
     "name": "Жаржан",
     "id": "zharzhan-serik",
     "fatherId": "serik-permebay",
     "lastName": "Құлмырза",
     "birthday": "1991-11-03",
     "notes": "Бағдарламашы (Software Engineer). Әулет шежіресін құрастырушы.",
-    "motherId": "altynay-serik-permebay"
+    "motherId": "altynay-baqyt"
   },
   {
     "name": "Диас",
@@ -239,7 +231,7 @@
     "lastName": "Құлмырза",
     "gender": "female",
     "birthday": "1996-02-09",
-    "motherId": "altynay-serik-permebay"
+    "motherId": "altynay-baqyt"
   },
   {
     "name": "Малика",
@@ -248,7 +240,7 @@
     "lastName": "Құлмырза",
     "gender": "female",
     "birthday": "2005-01-07",
-    "motherId": "altynay-serik-permebay"
+    "motherId": "altynay-baqyt"
   },
   {
     "name": "Болат",
@@ -332,24 +324,45 @@
     "fatherId": "kishi-zhuz"
   },
   {
+    "name": "Бақыт",
+    "id": "baqyt",
+    "fatherId": null
+  },
+  {
+    "name": "Алданыш",
+    "gender": "female",
+    "spouseOf": "baqyt",
+    "fatherId": null,
+    "id": "aldanysh-baqyt"
+  },
+  {
+    "name": "Алтынай",
+    "id": "altynay-baqyt",
+    "fatherId": "baqyt",
+    "lastName": "Сартабанова",
+    "gender": "female",
+    "spouseOf": "serik-permebay",
+    "motherId": "aldanysh-baqyt"
+  },
+  {
     "name": "Ералы",
     "id": "eraly",
     "fatherId": null,
     "lastName": "Дадабаев"
   },
   {
+    "name": "Әсет",
+    "gender": "female",
+    "spouseOf": "eraly",
+    "fatherId": null,
+    "id": "aset-eraly"
+  },
+  {
     "name": "Берік",
     "id": "berik-eraly",
     "fatherId": "eraly",
-    "lastName": "Дадабаев"
-  },
-  {
-    "name": "Сандуғаш",
-    "gender": "female",
-    "spouseOf": "berik-eraly",
-    "fatherId": null,
-    "id": "sandugash-berik-eraly",
-    "lastName": "Кенжебаева"
+    "lastName": "Дадабаев",
+    "motherId": "aset-eraly"
   },
   {
     "name": "Мереке",
@@ -359,7 +372,7 @@
     "gender": "female",
     "birthday": "1994-05-09",
     "spouseOf": "zharzhan-serik",
-    "motherId": "sandugash-berik-eraly"
+    "motherId": "sandugash-aybas"
   },
   {
     "name": "Анар",
@@ -368,7 +381,7 @@
     "lastName": "Дадабаева",
     "gender": "female",
     "birthday": "1997-08-26",
-    "motherId": "sandugash-berik-eraly"
+    "motherId": "sandugash-aybas"
   },
   {
     "name": "Аружан",
@@ -377,7 +390,7 @@
     "lastName": "Дадабаева",
     "gender": "female",
     "birthday": "2000-08-24",
-    "motherId": "sandugash-berik-eraly"
+    "motherId": "sandugash-aybas"
   },
   {
     "name": "Рания",
@@ -386,6 +399,27 @@
     "lastName": "Дадабаева",
     "gender": "female",
     "birthday": "2009-01-19",
-    "motherId": "sandugash-berik-eraly"
+    "motherId": "sandugash-aybas"
+  },
+  {
+    "name": "Айбас",
+    "id": "aybas",
+    "fatherId": null
+  },
+  {
+    "name": "Сара",
+    "gender": "female",
+    "spouseOf": "aybas",
+    "fatherId": null,
+    "id": "sara-aybas"
+  },
+  {
+    "name": "Сандуғаш",
+    "id": "sandugash-aybas",
+    "fatherId": "aybas",
+    "lastName": "Кенжебаева",
+    "gender": "female",
+    "spouseOf": "berik-eraly",
+    "motherId": "sara-aybas"
   }
 ]

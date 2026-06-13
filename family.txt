@@ -37,7 +37,7 @@
                           - Құттыбек
                           - Құлмырза
                             - Пермебай
-                              - Серік [lastName: Құлмырза] (spouse: Алтынай [lastName: Сартабанова])
+                              - Серік [lastName: Құлмырза]
                                 - Жаржан [lastName: Құлмырза, birthday: 1991-11-03, notes: Бағдарламашы (Software Engineer). Әулет шежіресін құрастырушы.]
                                   - Диас [lastName: Серік]
                                   - Сафия [lastName: Серік, gender: female]
@@ -59,9 +59,13 @@
     - Тойқожа
     - Ұланақ
   - Шөмен
-- Ералы [lastName: Дадабаев]
-  - Берік [lastName: Дадабаев] (spouse: Сандуғаш [lastName: Кенжебаева])
+- Бақыт (spouse: Алданыш)
+  - Алтынай [lastName: Сартабанова, gender: female, spouseOf: serik-permebay]
+- Ералы [lastName: Дадабаев] (spouse: Әсет)
+  - Берік [lastName: Дадабаев]
     - Мереке [lastName: Дадабаева, birthday: 1994-05-09, gender: female, spouseOf: zharzhan-serik]
     - Анар [lastName: Дадабаева, birthday: 1997-08-26, gender: female]
     - Аружан [lastName: Дадабаева, birthday: 2000-08-24, gender: female]
     - Рания [lastName: Дадабаева, birthday: 2009-01-19, gender: female]
+- Айбас (spouse: Сара)
+  - Сандуғаш [lastName: Кенжебаева, gender: female, spouseOf: berik-eraly]
