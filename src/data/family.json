@@ -209,20 +209,23 @@
     "fatherId": "serik-permebay",
     "lastName": "Құлмырза",
     "birthday": "1991-11-03",
-    "notes": "Бағдарламашы (Software Engineer). Әулет шежіресін құрастырушы."
+    "notes": "Бағдарламашы (Software Engineer). Әулет шежіресін құрастырушы.",
+    "motherId": "altynay-serik-permebay"
   },
   {
     "name": "Диас",
     "id": "dias-zharzhan",
     "fatherId": "zharzhan-serik",
-    "lastName": "Серік"
+    "lastName": "Серік",
+    "motherId": "mereke-berik"
   },
   {
     "name": "Сафия",
     "id": "safiya-zharzhan",
     "fatherId": "zharzhan-serik",
     "lastName": "Серік",
-    "gender": "female"
+    "gender": "female",
+    "motherId": "mereke-berik"
   },
   {
     "name": "Риза",
@@ -230,7 +233,8 @@
     "fatherId": "serik-permebay",
     "lastName": "Құлмырза",
     "gender": "female",
-    "birthday": "1996-02-09"
+    "birthday": "1996-02-09",
+    "motherId": "altynay-serik-permebay"
   },
   {
     "name": "Малика",
@@ -238,7 +242,8 @@
     "fatherId": "serik-permebay",
     "lastName": "Құлмырза",
     "gender": "female",
-    "birthday": "2005-01-07"
+    "birthday": "2005-01-07",
+    "motherId": "altynay-serik-permebay"
   },
   {
     "name": "Болат",
@@ -348,7 +353,8 @@
     "lastName": "Дадабаева",
     "gender": "female",
     "birthday": "1994-05-09",
-    "spouseOf": "zharzhan-serik"
+    "spouseOf": "zharzhan-serik",
+    "motherId": "sandugash-berik-eraly"
   },
   {
     "name": "Анар",
@@ -356,7 +362,8 @@
     "fatherId": "berik-eraly",
     "lastName": "Дадабаева",
     "gender": "female",
-    "birthday": "1997-08-26"
+    "birthday": "1997-08-26",
+    "motherId": "sandugash-berik-eraly"
   },
   {
     "name": "Аружан",
@@ -364,7 +371,8 @@
     "fatherId": "berik-eraly",
     "lastName": "Дадабаева",
     "gender": "female",
-    "birthday": "2000-08-24"
+    "birthday": "2000-08-24",
+    "motherId": "sandugash-berik-eraly"
   },
   {
     "name": "Рания",
@@ -372,6 +380,7 @@
     "fatherId": "berik-eraly",
     "lastName": "Дадабаева",
     "gender": "female",
-    "birthday": "2009-01-19"
+    "birthday": "2009-01-19",
+    "motherId": "sandugash-berik-eraly"
   }
 ]
