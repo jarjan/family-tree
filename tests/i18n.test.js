@@ -8,10 +8,10 @@ test('i18n - defaults to Kazakh (kk)', () => {
 
 test('i18n - translates keys to selected language', () => {
   setLanguage('en');
-  assert.equal(t('appTitle'), 'Family Tree Heritage');
+  assert.equal(t('appTitle'), "Zharzhan & Mereke's Family Tree");
   
   setLanguage('kk');
-  assert.equal(t('appTitle'), 'Шежіре');
+  assert.equal(t('appTitle'), 'Жаржан мен Мерекенің шежіресі');
 });
 
 test('i18n - falls back to the key itself when translation is missing', () => {

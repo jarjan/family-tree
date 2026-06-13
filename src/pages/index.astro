@@ -3,16 +3,30 @@ import { TreeApp } from '../components/TreeApp.jsx';
 import '../styles/global.css';
 ---
 
-<html lang="en">
+<html lang="kk">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
-		<link rel="alternate icon" type="image/x-icon" href={`${import.meta.env.BASE_URL}favicon.ico`} />
+		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
+		<link rel="alternate icon" type="image/x-icon" href={`${import.meta.env.BASE_URL}/favicon.ico`} />
+		<link rel="manifest" href={`${import.meta.env.BASE_URL}/manifest.json`} />
+		<link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}/icon-192.png`} />
+		<meta name="theme-color" content="#000000" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Family Tree Heritage - Кіші жүз</title>
+		<title>Жаржан мен Мерекенің шежіресі - Family Tree</title>
 	</head>
 	<body>
 		<TreeApp client:load />
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					const base = import.meta.env.BASE_URL;
+					const swUrl = base.endsWith('/') ? `${base}sw.js` : `${base}/sw.js`;
+					navigator.serviceWorker.register(swUrl)
+						.then((reg) => console.log('Service Worker registered successfully:', reg.scope))
+						.catch((err) => console.error('Service Worker registration failed:', err));
+				});
+			}
+		</script>
 	</body>
 </html>
