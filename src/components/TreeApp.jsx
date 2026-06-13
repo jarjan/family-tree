@@ -54,11 +54,12 @@ export function TreeApp() {
           isPanelOpen={isPanelOpen}
         />
 
-        {isPanelOpen && selectedNode && (
+        {selectedNode && (
           <DetailPanel
             node={selectedNode}
             allData={familyData}
             onSelect={handleSelect}
+            isOpen={isPanelOpen}
             onClose={() => setIsPanelOpen(false)}
           />
         )}

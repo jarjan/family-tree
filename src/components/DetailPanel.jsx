@@ -2,7 +2,7 @@ import { t } from "../utils/i18n.js";
 import { getRelatives } from "../utils/relations.js";
 import "./DetailPanel.css";
 
-export function DetailPanel({ node, allData, onSelect, onClose }) {
+export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
   const {
     spouses,
     father,
@@ -24,7 +24,7 @@ export function DetailPanel({ node, allData, onSelect, onClose }) {
   };
 
   return (
-    <div className="detail-panel glass">
+    <div className={`detail-panel glass ${isOpen ? "open" : ""}`}>
       <div className="panel-handle"></div>
       <button className="close-btn btn" onClick={onClose}>
         ×
