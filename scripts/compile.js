@@ -60,10 +60,13 @@ function parseAttrs(attrsStr) {
   return res;
 }
 
-function main() {
+// Export helpers for testing
+export { slugify, parseAttrs, main };
+
+function main(txtPathOverride, jsonPathOverride) {
   const baseDir = path.dirname(__dirname);
-  const txtPath = path.join(baseDir, "family.txt");
-  const jsonPath = path.join(baseDir, "src", "data", "family.json");
+  const txtPath = txtPathOverride || path.join(baseDir, "family.txt");
+  const jsonPath = jsonPathOverride || path.join(baseDir, "src", "data", "family.json");
 
   if (!fs.existsSync(txtPath)) {
     console.error(`Error: ${txtPath} not found.`);
@@ -262,4 +265,7 @@ function main() {
   console.log(`Successfully compiled ${nodes.length} nodes to ${jsonPath}`);
 }
 
-main();
+// Execute compiler if run directly from the command line
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main();
+}
