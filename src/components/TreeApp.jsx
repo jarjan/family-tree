@@ -3,6 +3,7 @@ import { TreeCanvas } from "./TreeCanvas.jsx";
 import { DetailPanel } from "./DetailPanel.jsx";
 import { setLanguage, t } from "../utils/i18n.js";
 import familyData from "../data/family.json";
+import { OnboardingModal } from "./OnboardingModal.jsx";
 
 import "./TreeApp.css";
 
@@ -62,6 +63,7 @@ export function TreeApp() {
           />
         )}
       </main>
+      <OnboardingModal />
     </div>
   );
 }
