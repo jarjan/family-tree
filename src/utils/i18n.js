@@ -1,5 +1,5 @@
-import en from "../locales/en.json";
-import kk from "../locales/kk.json";
+import en from "../locales/en.json" with { type: "json" };
+import kk from "../locales/kk.json" with { type: "json" };
 
 export const dictionaries = {
   en,
