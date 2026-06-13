@@ -9,21 +9,22 @@ import "./TreeApp.css";
 
 export function TreeApp() {
   const [lang, setLang] = useState("kk");
+  setLanguage(lang); // Apply language synchronously during render
+
   const defaultFocus =
     familyData.find((d) => d.name === "Жаржан")?.id || familyData[0].id;
   const [selectedNodeId, setSelectedNodeId] = useState(defaultFocus);
   const [isPanelOpen, setIsPanelOpen] = useState(true);
 
-  // Apply language change
-  useEffect(() => {
-    setLanguage(lang);
-  }, [lang]);
-
   const selectedNode = familyData.find((n) => n.id === selectedNodeId);
 
   const handleSelect = (id) => {
-    setSelectedNodeId(id);
-    setIsPanelOpen(true);
+    if (selectedNodeId === id) {
+      setIsPanelOpen((prev) => !prev);
+    } else {
+      setSelectedNodeId(id);
+      setIsPanelOpen(true);
+    }
   };
 
   return (

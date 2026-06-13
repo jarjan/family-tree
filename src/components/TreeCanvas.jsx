@@ -458,14 +458,13 @@ export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
       <div
         className="canvas-layer"
         style={{
-          transform: `translate(calc(50vw + ${transform.x}px), calc(var(--canvas-center-y, 50vh) + ${transform.y}px)) scale(${transform.scale})`,
-          transition: (isDragging.current || touchZoomStartDist.current) ? "none" : "transform 0.1s ease",
+          "--tx": `${transform.x}px`,
+          "--ty": `${transform.y}px`,
+          "--scale": transform.scale,
+          "--transition-style": (isDragging.current || touchZoomStartDist.current) ? "none" : "transform 0.1s ease",
         }}
       >
-        <svg
-          className="edges-layer"
-          style={{ overflow: "visible", position: "absolute", top: 0, left: 0 }}
-        >
+        <svg className="edges-layer">
           {allLinks.map((link, i) => {
             const path = `M ${link.source.x},${link.source.y}
                           C ${link.source.x},${(link.source.y + link.target.y) / 2}
@@ -485,15 +484,11 @@ export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
           {allNodes.map((node, idx) => (
             <div
               key={`node-${node.data.id}-${idx}`}
+              className="node-wrapper"
               style={{
-                position: "absolute",
                 left: node.x,
                 top: node.y,
-                transform: "translate(-50%, -50%)",
-                display: "flex",
-                alignItems: "center",
-                gap: "30px",
-                zIndex: node.data.id === selectedId ? 10 : 1,
+                "--z-index": node.data.id === selectedId ? 10 : 1,
               }}
             >
               <MemberNode
