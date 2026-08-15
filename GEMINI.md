@@ -7,12 +7,13 @@ This document provides foundational mandates and architectural guidance for the 
 - **Hybrid Framework:** We use **Astro** for the project structure and static generation, with **Preact** for interactive UI components.
 - **Visualization:** **D3-hierarchy** is the core engine for tree calculations. Always prefer D3's hierarchical layout logic over manual coordinate math.
 - **Styling:** Use **Vanilla CSS**. Follow the "Glassmorphism" aesthetic established in `src/styles/global.css` and component-specific CSS files (e.g., using `backdrop-filter: blur()`, semi-transparent backgrounds, and thin borders).
+- **Environment:** Node.js `>=24.0.0` is required.
 
 ## 🌐 Internationalization (i18n)
 
 - **Utility:** All user-facing strings must be routed through `src/utils/i18n.js` using the `t()` function.
-- **Supported Languages:** `en` (English) and `kk` (Kazakh).
-- **Adding Strings:** When adding new UI text, update the `translations` object in `src/utils/i18n.js` for both languages.
+- **Supported Languages:** `en` (English) and `kk` (Kazakh, default).
+- **Adding Strings:** When adding new UI text, update both `src/locales/en.json` and `src/locales/kk.json`.
 
 ## 📊 Data Management & Schema
 
@@ -21,13 +22,16 @@ This document provides foundational mandates and architectural guidance for the 
 - **Schema Constraints:**
     - `id`, `fatherId`, and `motherId` are the primary keys for tree construction.
     - Relationships like `spouseOf` are handled as cross-references.
-- **Data Integrity:** After manually editing `family.txt`, always run `python3 compile.py` to compile and update `src/data/family.json`.
+- **Data Integrity & Compilation:**
+    - Compile data manually using `node scripts/compile.js`.
+    - Note that `npm run dev` and `npm run build` automatically run `scripts/compile.js` via `predev` and `prebuild` hooks.
 
-## 🛠 Workflows
+## 🛠 Workflows & Testing
 
 - **Component Structure:** Keep Preact components in `src/components/`. Pair each `.jsx` file with a corresponding `.css` file in the same directory.
 - **Tree Visualization:** The `TreeCanvas.jsx` component manages the relative-centric layout and SVG rendering. It dynamically builds a "family circle" around the selected member, showing ancestors, descendants, siblings, and cousins.
-- **Deployment:** The project is deployed to a subpath (`/family-tree/`). Always ensure `base: '/family-tree'` in `astro.config.mjs` is respected when adding links or asset paths.
+- **Testing:** Run tests with `npm test` (`node --test tests/*.test.js`).
+- **Deployment:** The project is deployed to GitHub Pages at `/family-tree/`. Always ensure `base: '/family-tree'` in `astro.config.mjs` is respected when adding links or asset paths.
 
 ## 🎨 Design Principles
 

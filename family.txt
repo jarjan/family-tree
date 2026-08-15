@@ -53,19 +53,59 @@
               - Құдайназар
             - Үсен
       - Баубек
+      - Мәку (Қалу)
+        - Бөлек
+          - Айт
+            - Тілеу
+              - Есіркеміс
+              - Алдаберді
+              - Жолдыаяқ
+              - Жақсымбет
+              - Мөңке би
+              - X
+                - Сартабан
+                  - Бақыт [lastName: Сартабанов] (spouse: Алданыш)
+                    - Алтынай [lastName: Сартабанова, gender: female, spouseOf: serik-permebay, notes: Кіші жүз, Әлім, Шекті ішіндегі Тілеу руы. Ақтөбе облысы, Шалқар өңірінен.]
+            - Қабақ
+          - Бұжыр
     - Қарамашақ
     - Айнақ
     - Тегінболат
     - Тойқожа
     - Ұланақ
   - Шөмен
-- Бақыт (spouse: Алданыш)
-  - Алтынай [lastName: Сартабанова, gender: female, spouseOf: serik-permebay]
-- Ералы [lastName: Дадабаев] (spouse: Әсет)
-  - Берік [lastName: Дадабаев]
-    - Мереке [lastName: Дадабаева, birthday: 1994-05-09, gender: female, spouseOf: zharzhan-serik]
-    - Анар [lastName: Дадабаева, birthday: 1997-08-26, gender: female]
-    - Аружан [lastName: Дадабаева, birthday: 2000-08-24, gender: female]
-    - Рания [lastName: Дадабаева, birthday: 2009-01-19, gender: female]
 - Айбас (spouse: Сара)
   - Сандуғаш [lastName: Кенжебаева, gender: female, spouseOf: berik-eraly]
+- Ұлы жүз
+  - Қаңлы
+    - Қара Қаңлы
+      - Ерезен
+      - Қаспан
+      - Еңке
+      - Танта
+        - Құлжан
+        - Шомақ
+        - Олжабай
+        - Қосаболат
+        - Қайырлия
+        - Тұра
+        - Таз
+        - Былғары
+        - Сертек
+        - X
+          - Дадабай
+            - Ералы [lastName: Дадабаев] (spouse: Әсет)
+              - Берік [lastName: Дадабаев]
+                - Мереке [lastName: Дадабаева, birthday: 1994-05-09, gender: female, spouseOf: zharzhan-serik, notes: Танта Қаңлы (Ұлы жүз). Жамбыл облысында тұрады.]
+                - Анар [lastName: Дадабаева, birthday: 1997-08-26, gender: female]
+                - Аружан [lastName: Дадабаева, birthday: 2000-08-24, gender: female]
+                - Рания [lastName: Дадабаева, birthday: 2009-01-19, gender: female]
+      - Оразымбет
+      - Бақа
+    - Сары Қаңлы
+      - Ақылқожа
+      - Әлсейіт
+      - Омыртқа
+      - Миям
+      - Шоқпар
+

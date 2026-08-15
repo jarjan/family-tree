@@ -12,7 +12,7 @@ This project provides a dynamic and responsive visualization of family lineages,
 - **UI Library:** [Preact](https://preactjs.com/)
 - **Visualization:** [D3-hierarchy](https://github.com/d3/d3-hierarchy)
 - **Styling:** Vanilla CSS (with Glassmorphism effects)
-- **Data Management:** Python (for UUID migrations)
+- **Data Management:** Node.js (`scripts/compile.js`)
 
 ## ✨ Features
 
@@ -29,10 +29,12 @@ This project provides a dynamic and responsive visualization of family lineages,
 ├── src/
 │   ├── components/    # Preact components (TreeCanvas, DetailPanel, etc.)
 │   ├── data/          # JSON data source (family.json)
+│   ├── locales/       # Translation dictionaries (en.json, kk.json)
 │   ├── pages/         # Astro pages (entry point)
 │   ├── utils/         # i18n and helper functions
 │   └── styles/        # Global CSS
-├── compile.py         # Python script for compiling family.txt to family.json
+├── scripts/
+│   ├── compile.js     # Script for compiling family.txt to family.json
 ├── family.txt         # Indented family tree text representation (source of truth)
 └── astro.config.mjs   # Astro configuration (base path, integrations)
 ```
@@ -41,8 +43,7 @@ This project provides a dynamic and responsive visualization of family lineages,
 
 ### Prerequisites
 
-- **Node.js:** `^22.12.0` (as specified in `package.json`)
-- **Python:** (Optional, for running `compile.py`)
+- **Node.js:** `>=24.0.0` (as specified in `package.json`)
 
 ### Installation
 
@@ -54,9 +55,10 @@ npm install
 
 | Command | Action |
 | :--- | :--- |
-| `npm run dev` | Starts local dev server at `localhost:4321/family-tree/` |
-| `npm run build` | Builds the production site to `./dist/` |
+| `npm run dev` | Starts local dev server at `localhost:4321/family-tree/` (auto-compiles `family.txt`) |
+| `npm run build` | Builds the production site to `./dist/` (auto-compiles `family.txt`) |
 | `npm run preview` | Previews the production build locally |
+| `npm test` | Runs the test suite |
 
 ## 📊 Data Structure
 
@@ -78,8 +80,9 @@ To edit the family tree data:
 1. Open and modify [family.txt](file:///Users/jarjan/Desktop/dev/family-tree/family.txt) (the source of truth).
 2. Compile your changes to JSON:
    ```sh
-   python3 compile.py
+   node scripts/compile.js
    ```
+   *(Note: `npm run dev` and `npm run build` automatically compile `family.txt` as well)*
 
 ## 🚀 Deployment
 

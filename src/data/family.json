@@ -294,6 +294,94 @@
     "fatherId": "zhamanaq-shekti-alim"
   },
   {
+    "name": "Мәку (Қалу)",
+    "id": "maku-qalu-zhamanaq-shekti",
+    "fatherId": "zhamanaq-shekti-alim"
+  },
+  {
+    "name": "Бөлек",
+    "id": "bolek-maku-qalu",
+    "fatherId": "maku-qalu-zhamanaq-shekti"
+  },
+  {
+    "name": "Айт",
+    "id": "ayt-bolek",
+    "fatherId": "bolek-maku-qalu"
+  },
+  {
+    "name": "Тілеу",
+    "id": "tileu-ayt",
+    "fatherId": "ayt-bolek"
+  },
+  {
+    "name": "Есіркеміс",
+    "id": "esirkemis-tileu",
+    "fatherId": "tileu-ayt"
+  },
+  {
+    "name": "Алдаберді",
+    "id": "aldaberdi-tileu",
+    "fatherId": "tileu-ayt"
+  },
+  {
+    "name": "Жолдыаяқ",
+    "id": "zholdyayaq-tileu",
+    "fatherId": "tileu-ayt"
+  },
+  {
+    "name": "Жақсымбет",
+    "id": "zhaqsymbet-tileu",
+    "fatherId": "tileu-ayt"
+  },
+  {
+    "name": "Мөңке би",
+    "id": "monke-bi-tileu",
+    "fatherId": "tileu-ayt"
+  },
+  {
+    "name": "X",
+    "id": "x-tileu",
+    "fatherId": "tileu-ayt"
+  },
+  {
+    "name": "Сартабан",
+    "id": "sartaban-x",
+    "fatherId": "x-tileu"
+  },
+  {
+    "name": "Бақыт",
+    "id": "baqyt-sartaban",
+    "fatherId": "sartaban-x",
+    "lastName": "Сартабанов"
+  },
+  {
+    "name": "Алданыш",
+    "gender": "female",
+    "spouseOf": "baqyt-sartaban",
+    "fatherId": null,
+    "id": "aldanysh-baqyt-sartaban"
+  },
+  {
+    "name": "Алтынай",
+    "id": "altynay-baqyt",
+    "fatherId": "baqyt-sartaban",
+    "lastName": "Сартабанова",
+    "gender": "female",
+    "spouseOf": "serik-permebay",
+    "notes": "Кіші жүз, Әлім, Шекті ішіндегі Тілеу руы. Ақтөбе облысы, Шалқар өңірінен.",
+    "motherId": "aldanysh-baqyt-sartaban"
+  },
+  {
+    "name": "Қабақ",
+    "id": "qabaq-ayt",
+    "fatherId": "ayt-bolek"
+  },
+  {
+    "name": "Бұжыр",
+    "id": "buzhyr-bolek",
+    "fatherId": "bolek-maku-qalu"
+  },
+  {
     "name": "Қарамашақ",
     "id": "qaramashaq-alim",
     "fatherId": "alim-kishi-zhuz"
@@ -324,45 +412,135 @@
     "fatherId": "kishi-zhuz"
   },
   {
-    "name": "Бақыт",
-    "id": "baqyt",
+    "name": "Айбас",
+    "id": "aybas",
     "fatherId": null
   },
   {
-    "name": "Алданыш",
+    "name": "Сара",
     "gender": "female",
-    "spouseOf": "baqyt",
+    "spouseOf": "aybas",
     "fatherId": null,
-    "id": "aldanysh-baqyt"
+    "id": "sara-aybas"
   },
   {
-    "name": "Алтынай",
-    "id": "altynay-baqyt",
-    "fatherId": "baqyt",
-    "lastName": "Сартабанова",
+    "name": "Сандуғаш",
+    "id": "sandugash-aybas",
+    "fatherId": "aybas",
+    "lastName": "Кенжебаева",
     "gender": "female",
-    "spouseOf": "serik-permebay",
-    "motherId": "aldanysh-baqyt"
+    "spouseOf": "berik-eraly",
+    "motherId": "sara-aybas"
+  },
+  {
+    "name": "Ұлы жүз",
+    "id": "uly-zhuz",
+    "fatherId": null
+  },
+  {
+    "name": "Қаңлы",
+    "id": "qanly-uly-zhuz",
+    "fatherId": "uly-zhuz"
+  },
+  {
+    "name": "Қара Қаңлы",
+    "id": "qara-qanly-qanly",
+    "fatherId": "qanly-uly-zhuz"
+  },
+  {
+    "name": "Ерезен",
+    "id": "erezen-qara-qanly",
+    "fatherId": "qara-qanly-qanly"
+  },
+  {
+    "name": "Қаспан",
+    "id": "qaspan-qara-qanly",
+    "fatherId": "qara-qanly-qanly"
+  },
+  {
+    "name": "Еңке",
+    "id": "enke-qara-qanly",
+    "fatherId": "qara-qanly-qanly"
+  },
+  {
+    "name": "Танта",
+    "id": "tanta-qara-qanly",
+    "fatherId": "qara-qanly-qanly"
+  },
+  {
+    "name": "Құлжан",
+    "id": "qulzhan-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Шомақ",
+    "id": "shomaq-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Олжабай",
+    "id": "olzhabay-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Қосаболат",
+    "id": "qosabolat-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Қайырлия",
+    "id": "qayyrliya-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Тұра",
+    "id": "tura-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Таз",
+    "id": "taz-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Былғары",
+    "id": "bylgary-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Сертек",
+    "id": "sertek-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "X",
+    "id": "x-tanta",
+    "fatherId": "tanta-qara-qanly"
+  },
+  {
+    "name": "Дадабай",
+    "id": "dadabay-x",
+    "fatherId": "x-tanta"
   },
   {
     "name": "Ералы",
-    "id": "eraly",
-    "fatherId": null,
+    "id": "eraly-dadabay",
+    "fatherId": "dadabay-x",
     "lastName": "Дадабаев"
   },
   {
     "name": "Әсет",
     "gender": "female",
-    "spouseOf": "eraly",
+    "spouseOf": "eraly-dadabay",
     "fatherId": null,
-    "id": "aset-eraly"
+    "id": "aset-eraly-dadabay"
   },
   {
     "name": "Берік",
     "id": "berik-eraly",
-    "fatherId": "eraly",
+    "fatherId": "eraly-dadabay",
     "lastName": "Дадабаев",
-    "motherId": "aset-eraly"
+    "motherId": "aset-eraly-dadabay"
   },
   {
     "name": "Мереке",
@@ -372,6 +550,7 @@
     "gender": "female",
     "birthday": "1994-05-09",
     "spouseOf": "zharzhan-serik",
+    "notes": "Танта Қаңлы (Ұлы жүз). Жамбыл облысында тұрады.",
     "motherId": "sandugash-aybas"
   },
   {
@@ -402,24 +581,43 @@
     "motherId": "sandugash-aybas"
   },
   {
-    "name": "Айбас",
-    "id": "aybas",
-    "fatherId": null
+    "name": "Оразымбет",
+    "id": "orazymbet-qara-qanly",
+    "fatherId": "qara-qanly-qanly"
   },
   {
-    "name": "Сара",
-    "gender": "female",
-    "spouseOf": "aybas",
-    "fatherId": null,
-    "id": "sara-aybas"
+    "name": "Бақа",
+    "id": "baqa-qara-qanly",
+    "fatherId": "qara-qanly-qanly"
   },
   {
-    "name": "Сандуғаш",
-    "id": "sandugash-aybas",
-    "fatherId": "aybas",
-    "lastName": "Кенжебаева",
-    "gender": "female",
-    "spouseOf": "berik-eraly",
-    "motherId": "sara-aybas"
+    "name": "Сары Қаңлы",
+    "id": "sary-qanly-qanly",
+    "fatherId": "qanly-uly-zhuz"
+  },
+  {
+    "name": "Ақылқожа",
+    "id": "aqylqozha-sary-qanly",
+    "fatherId": "sary-qanly-qanly"
+  },
+  {
+    "name": "Әлсейіт",
+    "id": "alseyit-sary-qanly",
+    "fatherId": "sary-qanly-qanly"
+  },
+  {
+    "name": "Омыртқа",
+    "id": "omyrtqa-sary-qanly",
+    "fatherId": "sary-qanly-qanly"
+  },
+  {
+    "name": "Миям",
+    "id": "miyam-sary-qanly",
+    "fatherId": "sary-qanly-qanly"
+  },
+  {
+    "name": "Шоқпар",
+    "id": "shoqpar-sary-qanly",
+    "fatherId": "sary-qanly-qanly"
   }
 ]
