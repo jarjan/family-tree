@@ -61,6 +61,7 @@ npm install
 | `npm run build` | Builds the production site to `./dist/` (auto-compiles `family.txt`) |
 | `npm run preview` | Previews the production build locally |
 | `npm test` | Runs the test suite |
+| `node scripts/generate-icons.js` | Regenerates the favicon and app icons in `public/` from the vector mark defined in the script |
 
 ## 📊 Data Structure
 
