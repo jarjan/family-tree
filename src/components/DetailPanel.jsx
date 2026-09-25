@@ -1,9 +1,20 @@
 import { useMemo } from "preact/hooks";
-import { t } from "../utils/i18n.js";
+import { useT } from "../utils/i18n.js";
 import { getRelatives } from "../utils/relations.js";
+import { getInitials } from "./MemberNode.jsx";
 import "./DetailPanel.css";
 
+function RelativeLink({ rel, onSelect }) {
+  if (!rel) return <span>-</span>;
+  return (
+    <button type="button" className="clickable-relative" onClick={() => onSelect(rel.id)}>
+      {rel.name} {rel.lastName || ""}
+    </button>
+  );
+}
+
 export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
+  const t = useT();
   const {
     spouseInfo,
     father,
@@ -15,20 +26,13 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
     cousins: uniqueCousins
   } = useMemo(() => getRelatives(allData, node), [allData, node]);
 
-
-  const RelativeLink = ({ rel }) => {
-    if (!rel) return <span>-</span>;
-    return (
-      <span className="clickable-relative" onClick={() => onSelect(rel.id)}>
-        {rel.name} {rel.lastName || ""}
-      </span>
-    );
-  };
-
   return (
-    <div className={`detail-panel glass ${isOpen ? "open" : ""}`}>
+    <aside
+      className={`detail-panel glass ${isOpen ? "open" : ""}`}
+      aria-label={t("detailsTitle")}
+    >
       <div className="panel-handle"></div>
-      <button className="close-btn btn" onClick={onClose}>
+      <button className="close-btn btn" onClick={onClose} aria-label={t("close")}>
         ×
       </button>
 
@@ -36,9 +40,7 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
         <div
           className={`panel-avatar ${node.gender === "female" ? "female" : ""}`}
         >
-          {node.lastName
-            ? `${node.name.charAt(0)}${node.lastName.charAt(0)}`.toUpperCase()
-            : node.name.substring(0, 2).toUpperCase()}
+          {getInitials(node)}
         </div>
         <h2>
           {node.name} {node.lastName || ""}
@@ -66,7 +68,7 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
             <ul className="children-list">
               {grandparents.map((gp) => (
                 <li key={gp.id}>
-                  <RelativeLink rel={gp} />
+                  <RelativeLink onSelect={onSelect} rel={gp} />
                 </li>
               ))}
             </ul>
@@ -76,14 +78,14 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
         <div className="info-group">
           <h4>{t("father")}</h4>
           <p>
-            <RelativeLink rel={father} />
+            <RelativeLink onSelect={onSelect} rel={father} />
           </p>
         </div>
 
         <div className="info-group">
           <h4>{t("mother")}</h4>
           <p>
-            <RelativeLink rel={mother} />
+            <RelativeLink onSelect={onSelect} rel={mother} />
           </p>
         </div>
 
@@ -95,7 +97,7 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
             <ul className="children-list">
               {siblings.map((s) => (
                 <li key={s.id}>
-                  <RelativeLink rel={s} />
+                  <RelativeLink onSelect={onSelect} rel={s} />
                 </li>
               ))}
             </ul>
@@ -110,7 +112,7 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
             <ul className="children-list">
               {uniqueCousins.map((s) => (
                 <li key={s.id}>
-                  <RelativeLink rel={s} />
+                  <RelativeLink onSelect={onSelect} rel={s} />
                 </li>
               ))}
             </ul>
@@ -125,14 +127,14 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
                 return (
                   <li key={spouse.id} className="spouse-item">
                     <div className="spouse-main">
-                      <RelativeLink rel={spouse} />
+                      <RelativeLink onSelect={onSelect} rel={spouse} />
                     </div>
                     {parents.length > 0 && (
                       <div className="spouse-relatives">
                         <span className="spouse-relatives-label">{t("spouseParents")}: </span>
                         {parents.map((p, idx) => (
                           <span key={p.id}>
-                            <RelativeLink rel={p} />
+                            <RelativeLink onSelect={onSelect} rel={p} />
                             {idx < parents.length - 1 ? ", " : ""}
                           </span>
                         ))}
@@ -143,7 +145,7 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
                         <span className="spouse-relatives-label">{t("spouseSiblings")}: </span>
                         {siblings.map((sib, idx) => (
                           <span key={sib.id}>
-                            <RelativeLink rel={sib} />
+                            <RelativeLink onSelect={onSelect} rel={sib} />
                             {idx < siblings.length - 1 ? ", " : ""}
                           </span>
                         ))}
@@ -164,7 +166,7 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
             <ul className="children-list">
               {children.map((c) => (
                 <li key={c.id}>
-                  <RelativeLink rel={c} />
+                  <RelativeLink onSelect={onSelect} rel={c} />
                 </li>
               ))}
             </ul>
@@ -181,7 +183,7 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
             <ul className="children-list">
               {grandchildren.map((gc) => (
                 <li key={gc.id}>
-                  <RelativeLink rel={gc} />
+                  <RelativeLink onSelect={onSelect} rel={gc} />
                 </li>
               ))}
             </ul>
@@ -193,6 +195,6 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
           <p className="bio-text">{node.notes || t("noBio")}</p>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }

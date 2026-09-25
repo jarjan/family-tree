@@ -30,7 +30,25 @@
   color: var(--text-primary);
 }
 
+.app-header h1 {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+  margin-left: 1rem;
+}
+
 .lang-switcher {
+  flex-shrink: 0;
   display: flex;
   gap: 0.25rem;
 }
@@ -62,6 +80,17 @@
     letter-spacing: 0.12em;
   }
 
+  /* On phones the title gives up space first so search stays usable */
+  .app-header h1 {
+    flex: 1 1 0;
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+  }
+
   .app-main {
     height: calc(100vh - 50px);
     margin-top: 50px;
@@ -70,5 +99,9 @@
   .btn {
     padding: 0.4rem 0.8rem;
     font-size: 0.75rem;
+  }
+
+  .lang-switcher .btn {
+    padding: 0.4rem 0.55rem;
   }
 }

@@ -33,35 +33,80 @@ function slugify(text) {
   return slug.replace(/^-+|-+$/g, '');
 }
 
+const ATTR_KEYWORDS = ["id", "lastName", "gender", "spouseOf", "motherId", "fatherId", "birthday", "notes"];
+// A keyword only counts at the start of the list or right after a comma, so free
+// text such as `notes: gender: unknown` stays inside the notes value.
+const ATTR_KEY_REGEX = new RegExp(`(?:^|,)\\s*(${ATTR_KEYWORDS.join("|")})\\s*:`, "g");
+
 function parseAttrs(attrsStr) {
   const res = {};
   if (!attrsStr) return res;
-  const keywords = ["id", "lastName", "gender", "spouseOf", "motherId", "fatherId", "birthday", "notes"];
-  const positions = [];
-  
-  for (const kw of keywords) {
-    const pos = attrsStr.indexOf(kw + ":");
-    if (pos !== -1) {
-      positions.push({ pos, kw });
-    }
-  }
-  
-  positions.sort((a, b) => a.pos - b.pos);
-  for (let i = 0; i < positions.length; i++) {
-    const { pos, kw } = positions[i];
-    const startVal = pos + kw.length + 1;
-    const endVal = (i + 1 < positions.length) ? positions[i + 1].pos : attrsStr.length;
-    let val = attrsStr.slice(startVal, endVal).trim();
-    if (val.endsWith(",")) {
-      val = val.slice(0, -1).trim();
-    }
-    res[kw] = val;
+
+  const matches = [...attrsStr.matchAll(ATTR_KEY_REGEX)];
+  for (let i = 0; i < matches.length; i++) {
+    const m = matches[i];
+    const startVal = m.index + m[0].length;
+    const endVal = i + 1 < matches.length ? matches[i + 1].index : attrsStr.length;
+    res[m[1]] = attrsStr.slice(startVal, endVal).trim();
   }
   return res;
 }
 
+/**
+ * Checks the compiled nodes for problems that would break the tree at runtime.
+ * Returns a list of human-readable error messages (empty when valid).
+ */
+function validateNodes(nodes) {
+  const errors = [];
+  const byId = new Map();
+
+  for (const node of nodes) {
+    if (byId.has(node.id)) {
+      errors.push(`Duplicate id "${node.id}" (${byId.get(node.id).name} and ${node.name})`);
+    } else {
+      byId.set(node.id, node);
+    }
+  }
+
+  for (const node of nodes) {
+    for (const key of ["fatherId", "motherId", "spouseOf"]) {
+      if (node[key] && !byId.has(node[key])) {
+        errors.push(`"${node.id}" has ${key} "${node[key]}", which does not exist`);
+      }
+      if (node[key] && node[key] === node.id) {
+        errors.push(`"${node.id}" references itself as ${key}`);
+      }
+    }
+    if (node.gender && !["male", "female"].includes(node.gender)) {
+      errors.push(`"${node.id}" has unknown gender "${node.gender}" (use male or female)`);
+    }
+    if (node.birthday && !/^\d{4}(-\d{2}(-\d{2})?)?$/.test(node.birthday)) {
+      errors.push(`"${node.id}" has birthday "${node.birthday}" (use YYYY, YYYY-MM or YYYY-MM-DD)`);
+    }
+  }
+
+  // Ancestry cycles (someone being their own ancestor) would hang the UI
+  const state = new Map(); // id -> "visiting" | "done"
+  const visit = (id, path) => {
+    if (state.get(id) === "done") return;
+    if (state.get(id) === "visiting") {
+      errors.push(`Ancestry cycle: ${[...path.slice(path.indexOf(id)), id].join(" -> ")}`);
+      return;
+    }
+    state.set(id, "visiting");
+    const node = byId.get(id);
+    for (const parentId of [node.fatherId, node.motherId]) {
+      if (parentId && byId.has(parentId)) visit(parentId, [...path, id]);
+    }
+    state.set(id, "done");
+  };
+  for (const id of byId.keys()) visit(id, []);
+
+  return errors;
+}
+
 // Export helpers for testing
-export { slugify, parseAttrs, main };
+export { slugify, parseAttrs, validateNodes, main };
 
 function main(txtPathOverride, jsonPathOverride) {
   const baseDir = path.dirname(__dirname);
@@ -69,8 +114,7 @@ function main(txtPathOverride, jsonPathOverride) {
   const jsonPath = jsonPathOverride || path.join(baseDir, "src", "data", "family.json");
 
   if (!fs.existsSync(txtPath)) {
-    console.error(`Error: ${txtPath} not found.`);
-    process.exit(1);
+    throw new Error(`${txtPath} not found.`);
   }
 
   const fileContent = fs.readFileSync(txtPath, "utf-8");
@@ -244,15 +288,20 @@ function main(txtPathOverride, jsonPathOverride) {
     }
   }
 
-  // Second pass: automatically resolve motherId for children
+  // Second pass: resolve motherId for children when the father has exactly one wife.
+  // With several wives the mother is ambiguous and must be given explicitly (motherId: ...).
   for (const node of nodes) {
     if (node.fatherId && !node.motherId) {
-      // Find the female spouse of the father
-      const mother = nodes.find(n => n.spouseOf === node.fatherId && n.gender === "female");
-      if (mother) {
-        node.motherId = mother.id;
+      const wives = nodes.filter(n => n.spouseOf === node.fatherId && n.gender === "female");
+      if (wives.length === 1) {
+        node.motherId = wives[0].id;
       }
     }
+  }
+
+  const errors = validateNodes(nodes);
+  if (errors.length > 0) {
+    throw new Error(`${txtPath} has ${errors.length} problem(s):\n  - ${errors.join("\n  - ")}`);
   }
 
   // Ensure output directory exists
@@ -267,5 +316,10 @@ function main(txtPathOverride, jsonPathOverride) {
 
 // Execute compiler if run directly from the command line
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  main();
+  try {
+    main();
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+    process.exit(1);
+  }
 }

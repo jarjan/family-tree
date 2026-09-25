@@ -3,13 +3,10 @@
   "searchPlaceholder": "Search family member...",
   "detailsTitle": "Personal Details",
   "born": "Born",
-  "died": "Died",
-  "parent": "Parent",
   "children": "Children",
   "noBio": "No biography available.",
   "zoomIn": "Zoom In",
   "zoomOut": "Zoom Out",
-  "zoomInOut": "Zoom In/Out",
   "resetZoom": "Reset",
   "gender": "Gender",
   "male": "Male",
@@ -21,9 +18,6 @@
   "siblings": "Siblings",
   "cousins": "First Cousins",
   "grandparents": "Grandparents",
-  "paternalSide": "Paternal Side",
-  "maternalSide": "Maternal Side",
-  "unclesAunts": "Uncles & Aunts",
   "grandchildren": "Grandchildren",
   "spouseParents": "Spouse's Parents",
   "spouseSiblings": "Spouse's Siblings",
@@ -36,5 +30,7 @@
   "featureZoomDesc": "Drag with your mouse or finger to move the tree. Pinch to zoom on mobile, or use the mouse wheel and zoom buttons.",
   "featureLangTitle": "Bi-lingual Support",
   "featureLangDesc": "Toggle the interface language between English (EN) and Kazakh (KK) anytime using the top switcher.",
-  "dismissOnboarding": "Start Exploring"
+  "dismissOnboarding": "Start Exploring",
+  "close": "Close",
+  "noResults": "No matches"
 }

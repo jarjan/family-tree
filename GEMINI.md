@@ -5,13 +5,13 @@ This document provides foundational mandates and architectural guidance for the 
 ## 🏗 Architecture & Frameworks
 
 - **Hybrid Framework:** We use **Astro** for the project structure and static generation, with **Preact** for interactive UI components.
-- **Visualization:** **D3-hierarchy** is the core engine for tree calculations. Always prefer D3's hierarchical layout logic over manual coordinate math.
+- **Visualization:** Relationships are resolved in `src/utils/relations.js` and positioned by the pure `computeLayout()` in `src/utils/layout.js` (rows per generation, with overlap resolution). Keep layout logic there, not in components, so it stays testable.
 - **Styling:** Use **Vanilla CSS**. Follow the "Glassmorphism" aesthetic established in `src/styles/global.css` and component-specific CSS files (e.g., using `backdrop-filter: blur()`, semi-transparent backgrounds, and thin borders).
 - **Environment:** Node.js `>=24.0.0` is required.
 
 ## 🌐 Internationalization (i18n)
 
-- **Utility:** All user-facing strings must be routed through `src/utils/i18n.js` using the `t()` function.
+- **Utility:** All user-facing strings must be routed through `src/utils/i18n.js`: in components use `const t = useT()` (reads `LanguageContext`); elsewhere use `translate(lang, key)`.
 - **Supported Languages:** `en` (English) and `kk` (Kazakh, default).
 - **Adding Strings:** When adding new UI text, update both `src/locales/en.json` and `src/locales/kk.json`.
 
@@ -22,6 +22,8 @@ This document provides foundational mandates and architectural guidance for the 
 - **Schema Constraints:**
     - `id`, `fatherId`, and `motherId` are the primary keys for tree construction.
     - Relationships like `spouseOf` are handled as cross-references.
+    - `motherId` is auto-filled only when the father has exactly one wife; otherwise set it explicitly.
+    - The compiler validates the data (duplicate/dangling ids, gender, birthday format, ancestry cycles) and fails the build on errors.
 - **Data Integrity & Compilation:**
     - Compile data manually using `node scripts/compile.js`.
     - Note that `npm run dev` and `npm run build` automatically run `scripts/compile.js` via `predev` and `prebuild` hooks.
@@ -29,7 +31,7 @@ This document provides foundational mandates and architectural guidance for the 
 ## 🛠 Workflows & Testing
 
 - **Component Structure:** Keep Preact components in `src/components/`. Pair each `.jsx` file with a corresponding `.css` file in the same directory.
-- **Tree Visualization:** The `TreeCanvas.jsx` component manages the relative-centric layout and SVG rendering. It dynamically builds a "family circle" around the selected member, showing ancestors, descendants, siblings, and cousins.
+- **Tree Visualization:** The `TreeCanvas.jsx` component handles rendering and pan/zoom; layout comes from `computeLayout()`. It dynamically builds a "family circle" around the selected member, showing ancestors, descendants, siblings, and cousins.
 - **Testing:** Run tests with `npm test` (`node --test tests/*.test.js`).
 - **Deployment:** The project is deployed to GitHub Pages at `/family-tree/`. Always ensure `base: '/family-tree'` in `astro.config.mjs` is respected when adding links or asset paths.
 

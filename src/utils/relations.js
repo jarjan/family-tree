@@ -1,10 +1,102 @@
 /**
- * Resolves all relatives for a focal node from the family tree dataset.
- * Unifies the logic used by TreeCanvas and DetailPanel.
- * 
+ * Relationship resolution for the family tree dataset.
+ * Shared by TreeCanvas (layout) and DetailPanel (lists).
+ */
+
+// Per-dataset lookup tables, built once and reused across calls.
+const indexCache = new WeakMap();
+
+function getIndex(data) {
+  let index = indexCache.get(data);
+  if (index) return index;
+
+  const byId = new Map();
+  const childrenOf = new Map(); // parent id -> nodes naming it as fatherId/motherId
+  const spousesOf = new Map(); // id -> direct spouses (both directions of spouseOf)
+
+  const push = (map, key, value) => {
+    if (!map.has(key)) map.set(key, []);
+    const list = map.get(key);
+    if (!list.includes(value)) list.push(value);
+  };
+
+  for (const d of data) byId.set(d.id, d);
+  for (const d of data) {
+    if (d.fatherId) push(childrenOf, d.fatherId, d);
+    if (d.motherId) push(childrenOf, d.motherId, d);
+    if (d.spouseOf && byId.has(d.spouseOf)) {
+      push(spousesOf, d.id, byId.get(d.spouseOf));
+      push(spousesOf, d.spouseOf, d);
+    }
+  }
+
+  index = { byId, childrenOf, spousesOf };
+  indexCache.set(data, index);
+  return index;
+}
+
+/** Direct spouses of a person (never co-wives). */
+export function spousesOf(data, person) {
+  if (!person) return [];
+  return getIndex(data).spousesOf.get(person.id) || [];
+}
+
+/**
+ * Father and mother of a person. A missing parent is inferred from the known
+ * parent's spouse, but only when that spouse is unambiguous (exactly one).
+ */
+export function resolveParents(data, person) {
+  const { byId } = getIndex(data);
+  let father = person?.fatherId ? byId.get(person.fatherId) || null : null;
+  let mother = person?.motherId ? byId.get(person.motherId) || null : null;
+
+  if (father && !mother) {
+    const sp = spousesOf(data, father);
+    if (sp.length === 1) mother = sp[0];
+  } else if (mother && !father) {
+    const sp = spousesOf(data, mother);
+    if (sp.length === 1) father = sp[0];
+  }
+  return { father, mother };
+}
+
+export function isParentOf(data, parent, child) {
+  if (!parent || !child) return false;
+  const { father, mother } = resolveParents(data, child);
+  return father?.id === parent.id || mother?.id === parent.id;
+}
+
+/** Children of a person, including those whose link to them is inferred via a spouse. */
+export function childrenOf(data, person) {
+  if (!person) return [];
+  const { childrenOf: direct } = getIndex(data);
+  const result = [...(direct.get(person.id) || [])];
+  for (const sp of spousesOf(data, person)) {
+    for (const c of direct.get(sp.id) || []) {
+      if (!result.includes(c) && isParentOf(data, person, c)) result.push(c);
+    }
+  }
+  return result;
+}
+
+/** Full and half siblings (sharing an explicit or inferred parent). */
+export function siblingsOf(data, person) {
+  if (!person) return [];
+  const { father, mother } = resolveParents(data, person);
+  const result = [];
+  for (const p of [father, mother]) {
+    for (const c of childrenOf(data, p)) {
+      if (c.id !== person.id && !result.includes(c)) result.push(c);
+    }
+  }
+  return result;
+}
+
+/**
+ * Resolves all relatives for a focal node.
+ *
  * @param {Array} data - Complete list of family member nodes.
  * @param {Object} node - The focal node to resolve relatives for.
- * @returns {Object} An object containing resolved relationships.
  */
 export function getRelatives(data, node) {
   const relatives = {
@@ -16,161 +108,86 @@ export function getRelatives(data, node) {
     grandparents: [],
     siblings: [],
     cousins: [],
+    cousinGroups: [],
     children: [],
     grandchildren: [],
+    grandchildGroups: [],
     paternalAncestors: [],
     paternalUnclesAunts: [],
     maternalUnclesAunts: [],
-    spouseInfo: []
+    spouseInfo: [],
   };
 
   if (!node) return relatives;
+  const { byId } = getIndex(data);
 
-  // Spouses (including co-spouses/wives in polygamous structures)
-  relatives.spouses = data.filter(
-    (d) =>
-      d.spouseOf === node.id ||
-      (node.spouseOf && d.id === node.spouseOf) ||
-      (node.spouseOf && d.spouseOf === node.spouseOf && d.id !== node.id)
-  );
+  relatives.spouses = spousesOf(data, node);
 
-  // Direct Parents
-  relatives.father = node.fatherId ? data.find((d) => d.id === node.fatherId) : null;
-  relatives.mother = node.motherId ? data.find((d) => d.id === node.motherId) : null;
+  const { father, mother } = resolveParents(data, node);
+  relatives.father = father;
+  relatives.mother = mother;
+  if (father) relatives.parents.push(father);
+  if (mother) relatives.parents.push(mother);
 
-  // Resolve parents (filling missing father/mother if spouse exists)
-  let resolvedFather = relatives.father;
-  let resolvedMother = relatives.mother;
-  if (resolvedFather && !resolvedMother) {
-    resolvedMother = data.find((d) => d.spouseOf === resolvedFather.id || (resolvedFather.spouseOf && d.id === resolvedFather.spouseOf));
-  } else if (resolvedMother && !resolvedFather) {
-    resolvedFather = data.find((d) => d.spouseOf === resolvedMother.id || (resolvedMother.spouseOf && d.id === resolvedMother.spouseOf));
-  }
-  if (resolvedFather) relatives.parents.push(resolvedFather);
-  if (resolvedMother) relatives.parents.push(resolvedMother);
-
-  // Grandparents
-  relatives.parents.forEach((p, pIdx) => {
-    if (p) {
-      const gFather = p.fatherId ? data.find((d) => d.id === p.fatherId) : null;
-      let gMother = null;
-      if (gFather) {
-        gMother = data.find((d) => d.spouseOf === gFather.id || (gFather.spouseOf && d.id === gFather.spouseOf));
-      }
-      if (gFather) relatives.grandparents.push({ ...gFather, parentIdx: pIdx });
-      if (gMother) relatives.grandparents.push({ ...gMother, parentIdx: pIdx });
-    }
+  // Grandparents, tagged with the index of the parent they belong to
+  relatives.parents.forEach((p, parentIdx) => {
+    const gp = resolveParents(data, p);
+    if (gp.father) relatives.grandparents.push({ ...gp.father, parentIdx });
+    if (gp.mother) relatives.grandparents.push({ ...gp.mother, parentIdx });
   });
 
-  // Paternal Line (Ancestors beyond Grandfather)
-  if (resolvedFather) {
-    const paternalGFId = resolvedFather.fatherId;
-    const paternalGF = data.find((d) => d.id === paternalGFId);
-    if (paternalGF) {
-      let currentId = paternalGF.fatherId;
-      while (currentId) {
-        const ancestor = data.find((d) => d.id === currentId);
-        if (ancestor) {
-          relatives.paternalAncestors.push(ancestor);
-          currentId = ancestor.fatherId;
-        } else {
-          break;
-        }
-      }
+  // Paternal line beyond the paternal grandfather (guarded against cycles)
+  const paternalGF = father?.fatherId ? byId.get(father.fatherId) : null;
+  if (paternalGF) {
+    const seen = new Set([node.id, father.id, paternalGF.id]);
+    let current = paternalGF.fatherId ? byId.get(paternalGF.fatherId) : null;
+    while (current && !seen.has(current.id)) {
+      seen.add(current.id);
+      relatives.paternalAncestors.push(current);
+      current = current.fatherId ? byId.get(current.fatherId) : null;
     }
   }
 
-  // Siblings
-  relatives.siblings = data.filter(
-    (d) =>
-      d.id !== node.id &&
-      ((node.fatherId && d.fatherId === node.fatherId) ||
-        (node.motherId && d.motherId === node.motherId))
-  );
+  relatives.siblings = siblingsOf(data, node);
 
-  // Children
-  let children = data.filter(
-    (d) => d.fatherId === node.id || d.motherId === node.id
-  );
-  // If node is female (mother) and no children are found directly, resolve through spouse
-  if (node.gender === "female" && children.length === 0) {
-    const spouse = data.find(
-      (d) => d.spouseOf === node.id || (node.spouseOf && d.id === node.spouseOf)
-    );
-    if (spouse) {
-      children = data.filter((d) => d.fatherId === spouse.id || d.motherId === spouse.id);
-    }
+  relatives.children = childrenOf(data, node);
+  const seenGrandchildren = new Set();
+  for (const c of relatives.children) {
+    const kids = childrenOf(data, c).filter((gc) => !seenGrandchildren.has(gc.id));
+    kids.forEach((gc) => seenGrandchildren.add(gc.id));
+    if (kids.length) relatives.grandchildGroups.push({ parent: c, children: kids });
+    relatives.grandchildren.push(...kids);
   }
-  relatives.children = children;
 
-  // Grandchildren
-  children.forEach((c) => {
-    relatives.grandchildren.push(
-      ...data.filter((d) => d.fatherId === c.id || d.motherId === c.id)
-    );
-  });
+  // Uncles & aunts, and their children (first cousins)
+  relatives.paternalUnclesAunts = father ? siblingsOf(data, father) : [];
+  relatives.maternalUnclesAunts = mother ? siblingsOf(data, mother) : [];
 
-  // Uncles & Aunts (for Cousins)
-  const paternalUnclesAunts = data.filter(
-    (d) =>
-      node.fatherId &&
-      d.id !== node.fatherId &&
-      ((data.find((f) => f.id === node.fatherId)?.fatherId &&
-        d.fatherId === data.find((f) => f.id === node.fatherId).fatherId) ||
-        (data.find((f) => f.id === node.fatherId)?.motherId &&
-          d.motherId === data.find((f) => f.id === node.fatherId).motherId))
-  );
-  const maternalUnclesAunts = data.filter(
-    (d) =>
-      node.motherId &&
-      d.id !== node.motherId &&
-      ((data.find((m) => m.id === node.motherId)?.fatherId &&
-        d.fatherId === data.find((m) => m.id === node.motherId).fatherId) ||
-        (data.find((m) => m.id === node.motherId)?.motherId &&
-          d.motherId === data.find((m) => m.id === node.motherId).motherId))
-  );
-  relatives.paternalUnclesAunts = paternalUnclesAunts;
-  relatives.maternalUnclesAunts = maternalUnclesAunts;
+  const seenCousins = new Set();
+  const addCousinGroups = (unclesAunts, side) => {
+    for (const ua of unclesAunts) {
+      const kids = childrenOf(data, ua).filter(
+        (c) => c.id !== node.id && !seenCousins.has(c.id)
+      );
+      kids.forEach((c) => seenCousins.add(c.id));
+      if (kids.length) relatives.cousinGroups.push({ parent: ua, side, children: kids });
+      relatives.cousins.push(...kids);
+    }
+  };
+  addCousinGroups(relatives.paternalUnclesAunts, "paternal");
+  addCousinGroups(relatives.maternalUnclesAunts, "maternal");
 
-  // Cousins
-  const cousins = [];
-  [...paternalUnclesAunts, ...maternalUnclesAunts].forEach((ua) => {
-    cousins.push(...data.filter((d) => d.fatherId === ua.id || d.motherId === ua.id));
-  });
-  // Deduplicate cousins
-  relatives.cousins = cousins.filter((c, index, self) =>
-    self.findIndex((t) => t.id === c.id) === index
-  );
-
-  // Spouse Info (parents, siblings for canvas styling)
+  // Spouse's parents and siblings
   relatives.spouseInfo = relatives.spouses.map((sp) => {
-    let sFather = sp.fatherId ? data.find((d) => d.id === sp.fatherId) : null;
-    let sMother = sp.motherId ? data.find((d) => d.id === sp.motherId) : null;
-    if (sFather && !sMother) {
-      sMother = data.find((d) => d.spouseOf === sFather.id || (sFather.spouseOf && d.id === sFather.spouseOf));
-    } else if (sMother && !sFather) {
-      sFather = data.find((d) => d.spouseOf === sMother.id || (sMother.spouseOf && d.id === sMother.spouseOf));
-    }
-    const sParents = [];
-    if (sFather) sParents.push(sFather);
-    if (sMother) sParents.push(sMother);
-
-    const sSiblings = data.filter(
-      (d) =>
-        d.id !== sp.id &&
-        ((sp.fatherId && d.fatherId === sp.fatherId) ||
-          (sp.motherId && d.motherId === sp.motherId))
-    );
-
+    const sParents = resolveParents(data, sp);
     return {
       spouse: sp,
-      parents: sParents,
-      father: sFather,
-      mother: sMother,
-      siblings: sSiblings
+      parents: [sParents.father, sParents.mother].filter(Boolean),
+      father: sParents.father,
+      mother: sParents.mother,
+      siblings: siblingsOf(data, sp),
     };
   });
 
-  relatives.spouse = relatives.spouses;
   return relatives;
 }

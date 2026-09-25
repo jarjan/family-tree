@@ -1,6 +1,6 @@
 # 🌳 Family Tree (Shezhire)
 
-An interactive, web-based family tree (Shezhire) visualization tool built with Astro, Preact, and D3.js.
+An interactive, web-based family tree (Shezhire) visualization tool built with Astro and Preact.
 
 ## 🚀 Overview
 
@@ -10,7 +10,7 @@ This project provides a dynamic and responsive visualization of family lineages,
 
 - **Framework:** [Astro](https://astro.build/)
 - **UI Library:** [Preact](https://preactjs.com/)
-- **Visualization:** [D3-hierarchy](https://github.com/d3/d3-hierarchy)
+- **Layout:** Custom relative-centric layout (`src/utils/layout.js`)
 - **Styling:** Vanilla CSS (with Glassmorphism effects)
 - **Data Management:** Node.js (`scripts/compile.js`)
 
@@ -19,6 +19,8 @@ This project provides a dynamic and responsive visualization of family lineages,
 - **Relative-Centric View:** Dynamic visualization that clusters all immediate relatives (parents, grandparents, siblings, cousins, children, grandchildren) around a selected person.
 - **Bi-lingual Support:** Toggle between English (EN) and Kazakh (KK), with Kazakh as the default.
 - **Detail Panel:** Navigate through the family by clicking on relatives in the panel.
+- **Search:** Jump to anyone by first or last name from the header.
+- **Shareable Links:** The selected person is kept in the URL hash (e.g. `/family-tree/#zharzhan-serik`), and the back button returns to previously viewed people.
 - **Ultra-Compact UI:** Optimized for viewing large family circles efficiently.
 - **Glassmorphic UI:** Modern and clean aesthetic.
 
@@ -31,7 +33,7 @@ This project provides a dynamic and responsive visualization of family lineages,
 │   ├── data/          # JSON data source (family.json)
 │   ├── locales/       # Translation dictionaries (en.json, kk.json)
 │   ├── pages/         # Astro pages (entry point)
-│   ├── utils/         # i18n and helper functions
+│   ├── utils/         # i18n, relationship resolution (relations.js), layout (layout.js)
 │   └── styles/        # Global CSS
 ├── scripts/
 │   ├── compile.js     # Script for compiling family.txt to family.json
@@ -77,12 +79,16 @@ The family tree data is stored in `src/data/family.json`. Each member is an obje
 ### Data Compilation
 
 To edit the family tree data:
-1. Open and modify [family.txt](file:///Users/jarjan/Desktop/dev/family-tree/family.txt) (the source of truth).
+1. Open and modify [family.txt](family.txt) (the source of truth).
 2. Compile your changes to JSON:
    ```sh
    node scripts/compile.js
    ```
    *(Note: `npm run dev` and `npm run build` automatically compile `family.txt` as well)*
+
+The compiler fails with a list of problems if the data has duplicate ids, references to ids that don't exist, invalid `gender`/`birthday` values, or ancestry cycles.
+
+A child's `motherId` is filled in automatically only when the father has exactly one wife. With several wives, set `motherId:` explicitly on each child.
 
 ## 🚀 Deployment
 

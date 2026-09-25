@@ -1,29 +1,46 @@
 import { useState, useEffect } from "preact/hooks";
-import { t } from "../utils/i18n.js";
+import { useT } from "../utils/i18n.js";
+import { readStorage, writeStorage } from "../utils/storage.js";
 import "./OnboardingModal.css";
 
+const ONBOARDED_KEY = "family_tree_onboarded";
+
 export function OnboardingModal() {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const isDismissed = localStorage.getItem("family_tree_onboarded");
-    if (!isDismissed) {
+    if (!readStorage(ONBOARDED_KEY)) {
       setIsOpen(true);
     }
   }, []);
 
   const handleDismiss = () => {
-    localStorage.setItem("family_tree_onboarded", "true");
+    writeStorage(ONBOARDED_KEY, "true");
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") handleDismiss();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-content glass">
+      <div
+        className="modal-content glass"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="onboarding-title"
+      >
         <header className="modal-header">
-          <h2>{t("welcomeTitle")}</h2>
+          <h2 id="onboarding-title">{t("welcomeTitle")}</h2>
           <h3>{t("welcomeSubtitle")}</h3>
         </header>
 
@@ -78,7 +95,7 @@ export function OnboardingModal() {
           </li>
         </ul>
 
-        <button className="dismiss-btn btn active" onClick={handleDismiss}>
+        <button className="dismiss-btn btn active" onClick={handleDismiss} autoFocus>
           {t("dismissOnboarding")}
         </button>
       </div>

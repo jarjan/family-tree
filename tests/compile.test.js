@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { slugify, parseAttrs, main } from '../scripts/compile.js';
+import { slugify, parseAttrs, validateNodes, main } from '../scripts/compile.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -73,4 +73,72 @@ test('compiler integration - parses family tree hierarchy and resolves motherId'
     if (fs.existsSync(mockTxtPath)) fs.unlinkSync(mockTxtPath);
     if (fs.existsSync(mockJsonPath)) fs.unlinkSync(mockJsonPath);
   }
+});
+
+test('parseAttrs - keywords inside free text are not treated as attributes', () => {
+  assert.deepEqual(parseAttrs('notes: gender: unknown, lived in id: 5'), {
+    notes: 'gender: unknown, lived in id: 5'
+  });
+  assert.deepEqual(parseAttrs('fatherId: abc, notes: x'), { fatherId: 'abc', notes: 'x' });
+});
+
+test('validateNodes - reports duplicate ids, dangling references and bad values', () => {
+  const errors = validateNodes([
+    { id: 'a', name: 'A', gender: 'male' },
+    { id: 'a', name: 'A2' },
+    { id: 'b', name: 'B', fatherId: 'missing', gender: 'robot', birthday: '03/11/1991' }
+  ]);
+  assert.equal(errors.length, 4);
+  assert.match(errors.join('\n'), /Duplicate id "a"/);
+  assert.match(errors.join('\n'), /fatherId "missing"/);
+  assert.match(errors.join('\n'), /gender "robot"/);
+  assert.match(errors.join('\n'), /birthday "03\/11\/1991"/);
+});
+
+test('validateNodes - reports ancestry cycles', () => {
+  const errors = validateNodes([
+    { id: 'a', name: 'A', fatherId: 'b' },
+    { id: 'b', name: 'B', fatherId: 'a' }
+  ]);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /Ancestry cycle/);
+});
+
+test('validateNodes - the real family data is valid', async () => {
+  const { default: data } = await import('../src/data/family.json', { with: { type: 'json' } });
+  assert.deepEqual(validateNodes(data), []);
+});
+
+function compileString(content) {
+  const txtPath = path.join(__dirname, `tmp_${process.pid}_${Math.random().toString(36).slice(2)}.txt`);
+  const jsonPath = txtPath.replace(/\.txt$/, '.json');
+  fs.writeFileSync(txtPath, content, 'utf-8');
+  try {
+    main(txtPath, jsonPath);
+    return JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+  } finally {
+    for (const p of [txtPath, jsonPath]) if (fs.existsSync(p)) fs.unlinkSync(p);
+  }
+}
+
+test('compiler - does not guess the mother when the father has several wives', () => {
+  const compiled = compileString(`
+- Father [id: father] (spouse: Wife One [id: wife-1])
+  - Son
+- Wife Two [id: wife-2, gender: female, spouseOf: father]
+`);
+  const son = compiled.find(n => n.name === 'Son');
+  assert.equal(son.fatherId, 'father');
+  assert.equal(son.motherId, undefined);
+});
+
+test('compiler - fails on invalid data instead of writing it', () => {
+  assert.throws(
+    () => compileString('- A [id: same]\n- B [id: same]\n'),
+    /Duplicate id "same"/
+  );
+});
+
+test('compiler - throws when the source file is missing', () => {
+  assert.throws(() => main(path.join(__dirname, 'does-not-exist.txt'), '/dev/null'), /not found/);
 });
