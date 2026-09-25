@@ -195,10 +195,18 @@
     "fatherId": "qulmyrza-umbetali"
   },
   {
+    "name": "Қонырша",
+    "gender": "female",
+    "spouseOf": "permebay-qulmyrza",
+    "fatherId": null,
+    "id": "qonyrsha-permebay-qulmyrza"
+  },
+  {
     "name": "Серік",
     "id": "serik-permebay",
     "fatherId": "permebay-qulmyrza",
-    "lastName": "Құлмырза"
+    "lastName": "Құлмырза",
+    "motherId": "qonyrsha-permebay-qulmyrza"
   },
   {
     "name": "Жаржан",
@@ -246,7 +254,8 @@
     "name": "Болат",
     "id": "bolat-permebay",
     "fatherId": "permebay-qulmyrza",
-    "lastName": "Құлмырза"
+    "lastName": "Құлмырза",
+    "motherId": "qonyrsha-permebay-qulmyrza"
   },
   {
     "name": "Дәулетияр",
