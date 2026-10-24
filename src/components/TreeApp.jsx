@@ -1,10 +1,11 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "preact/hooks";
+import { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from "preact/hooks";
 import { TreeCanvas } from "./TreeCanvas.jsx";
 import { DetailPanel } from "./DetailPanel.jsx";
 import { SearchBox } from "./SearchBox.jsx";
 import { OnboardingModal } from "./OnboardingModal.jsx";
 import { DEFAULT_LANGUAGE, LanguageContext, isSupportedLanguage, translate } from "../utils/i18n.js";
 import { readStorage, writeStorage } from "../utils/storage.js";
+import { getRelatives } from "../utils/relations.js";
 import familyData from "../data/family.json";
 
 import "./TreeApp.css";
@@ -76,6 +77,8 @@ export function TreeApp() {
   }, []);
 
   const selectedNode = byId.get(selectedNodeId);
+  // Shared by the canvas layout and the detail panel
+  const relatives = useMemo(() => getRelatives(familyData, selectedNode), [selectedNode]);
 
   return (
     <LanguageContext.Provider value={lang}>
@@ -106,6 +109,7 @@ export function TreeApp() {
         <main className="app-main">
           <TreeCanvas
             data={familyData}
+            relatives={relatives}
             onSelect={handleSelect}
             selectedId={selectedNodeId}
             isPanelOpen={isPanelOpen}
@@ -114,7 +118,7 @@ export function TreeApp() {
           {selectedNode && (
             <DetailPanel
               node={selectedNode}
-              allData={familyData}
+              relatives={relatives}
               onSelect={handleSelect}
               isOpen={isPanelOpen}
               onClose={handleClose}

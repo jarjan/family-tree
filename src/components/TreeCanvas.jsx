@@ -1,7 +1,6 @@
-import { useState, useRef, useMemo } from "preact/hooks";
+import { useState, useRef, useMemo, useEffect } from "preact/hooks";
 import { MemberNode } from "./MemberNode.jsx";
 import { useT } from "../utils/i18n.js";
-import { getRelatives } from "../utils/relations.js";
 import { computeLayout } from "../utils/layout.js";
 import "./TreeCanvas.css";
 
@@ -10,6 +9,7 @@ const MAX_SCALE = 3;
 const BUTTON_ZOOM_FACTOR = 1.2;
 const WHEEL_ZOOM_INTENSITY = 0.002;
 const DRAG_THRESHOLD = 5; // px of movement before a press counts as a drag, not a click
+const WHEEL_SETTLE_MS = 150; // quiet time after the last wheel event before committing the zoom
 
 const clampScale = (s) => Math.min(Math.max(MIN_SCALE, s), MAX_SCALE);
 const touchDistance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
@@ -18,7 +18,7 @@ const touchMidpoint = (a, b) => ({
   y: (a.clientY + b.clientY) / 2,
 });
 
-export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
+export function TreeCanvas({ data, relatives, onSelect, selectedId, isPanelOpen }) {
   const t = useT();
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
   const transformRef = useRef(transform);
@@ -28,16 +28,13 @@ export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
   const canvasLayerRef = useRef(null);
   const gesture = useRef(null); // active drag or pinch
   const suppressClick = useRef(false);
+  const wheelTimer = useRef(null);
 
-  const focalNode = useMemo(
-    () => data.find((d) => d.id === selectedId) || data[0],
-    [data, selectedId]
-  );
+  useEffect(() => () => clearTimeout(wheelTimer.current), []);
 
-  const { nodes, links } = useMemo(
-    () => computeLayout(data, getRelatives(data, focalNode)),
-    [data, focalNode]
-  );
+  const focalNode = relatives.focal;
+
+  const { nodes, links } = useMemo(() => computeLayout(data, relatives), [data, relatives]);
 
   const renderedLinks = useMemo(() => {
     return links.map((link, i) => {
@@ -66,17 +63,16 @@ export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
           "--z-index": node.data.id === selectedId ? 10 : 1,
         }}
       >
-        <MemberNode
-          data={node.data}
-          isSelected={node.data.id === selectedId}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect(node.data.id);
-          }}
-        />
+        <MemberNode data={node.data} isSelected={node.data.id === selectedId} />
       </div>
     ));
-  }, [nodes, selectedId, onSelect]);
+  }, [nodes, selectedId]);
+
+  // One delegated handler for every card instead of a closure per node.
+  const onNodeClick = (e) => {
+    const card = e.target.closest("[data-id]");
+    if (card) onSelect(card.dataset.id);
+  };
 
   if (!focalNode) return <div className="loading">No Data found.</div>;
 
@@ -183,7 +179,14 @@ export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
     // Trackpad pinch arrives as ctrl+wheel with small deltas; boost it.
     const intensity = e.ctrlKey ? WHEEL_ZOOM_INTENSITY * 5 : WHEEL_ZOOM_INTENSITY;
     const scale = transformRef.current.scale * Math.exp(-deltaY * intensity);
-    commitTransform(zoomAround(e.clientX, e.clientY, scale));
+    // Zoom on the DOM per event and commit to state once the wheel settles.
+    setInstant(true);
+    applyTransform(zoomAround(e.clientX, e.clientY, scale));
+    clearTimeout(wheelTimer.current);
+    wheelTimer.current = setTimeout(() => {
+      if (!gesture.current) setInstant(false);
+      commitTransform({ ...transformRef.current });
+    }, WHEEL_SETTLE_MS);
   };
 
   const startPinch = (a, b) => {
@@ -291,6 +294,7 @@ export function TreeCanvas({ data, onSelect, selectedId, isPanelOpen }) {
 
         <div
           className="nodes-layer"
+          onClick={onNodeClick}
           style={{
             position: "absolute",
             top: 0,

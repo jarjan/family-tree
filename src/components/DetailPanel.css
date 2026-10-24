@@ -42,7 +42,8 @@
   border: 1px solid var(--card-border);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all var(--transition-speed) ease;
+  transition: var(--transition-speed) ease;
+  transition-property: background-color, border-color, color;
 }
 
 .close-btn:hover {
@@ -80,7 +81,8 @@
   font-weight: 700;
   font-size: 2.2rem;
   color: #ffffff;
-  transition: all var(--transition-speed) ease;
+  transition: var(--transition-speed) ease;
+  transition-property: background-color, border-color, color;
 }
 
 .panel-avatar.female {
@@ -143,7 +145,8 @@
   cursor: pointer;
   color: var(--text-secondary);
   font-weight: 500;
-  transition: all var(--transition-speed) ease;
+  transition: var(--transition-speed) ease;
+  transition-property: background-color, border-color, color;
 }
 
 .clickable-relative:hover,

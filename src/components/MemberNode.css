@@ -9,7 +9,9 @@
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   color: var(--text-primary);
-  transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.04);
+  transition: var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+  transition-property: transform, background-color, border-color, color, box-shadow;
   position: relative;
   z-index: 2;
 }
@@ -47,7 +49,8 @@
   font-weight: 600;
   font-size: 0.8rem;
   color: #ffffff; /* White letters */
-  transition: all var(--transition-speed) ease;
+  transition: var(--transition-speed) ease;
+  transition-property: background-color, border-color, color;
 }
 
 /* Shape distinction: Female is circular and white fill with dark border */

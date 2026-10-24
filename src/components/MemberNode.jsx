@@ -6,22 +6,22 @@ export function getInitials(person) {
     : person.name.substring(0, 2).toUpperCase();
 }
 
-export function MemberNode({ data, isSelected, onClick }) {
+export function MemberNode({ data, isSelected }) {
   const onKeyDown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      onClick(e);
+      e.currentTarget.click();
     }
   };
 
   return (
     <div
-      className={`member-node glass ${isSelected ? 'selected' : ''} ${data.gender === 'female' ? 'female' : ''}`}
+      className={`member-node ${isSelected ? 'selected' : ''} ${data.gender === 'female' ? 'female' : ''}`}
+      data-id={data.id}
       role="button"
       tabIndex={0}
       aria-pressed={isSelected}
       aria-label={[data.name, data.lastName].filter(Boolean).join(' ')}
-      onClick={onClick}
       onKeyDown={onKeyDown}
     >
       <div className="avatar-placeholder" aria-hidden="true">

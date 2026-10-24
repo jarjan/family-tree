@@ -95,7 +95,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-speed) ease;
+  transition: var(--transition-speed) ease;
+  transition-property: background-color, border-color, color;
 }
 
 .control-btn:hover {

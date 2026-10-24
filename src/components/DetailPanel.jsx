@@ -1,6 +1,4 @@
-import { useMemo } from "preact/hooks";
 import { useT } from "../utils/i18n.js";
-import { getRelatives } from "../utils/relations.js";
 import { getInitials } from "./MemberNode.jsx";
 import "./DetailPanel.css";
 
@@ -13,7 +11,7 @@ function RelativeLink({ rel, onSelect }) {
   );
 }
 
-export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
+export function DetailPanel({ node, relatives, onSelect, onClose, isOpen }) {
   const t = useT();
   const {
     spouseInfo,
@@ -24,7 +22,7 @@ export function DetailPanel({ node, allData, onSelect, onClose, isOpen }) {
     grandchildren,
     siblings,
     cousins: uniqueCousins
-  } = useMemo(() => getRelatives(allData, node), [allData, node]);
+  } = relatives;
 
   return (
     <aside
