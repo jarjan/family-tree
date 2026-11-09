@@ -85,9 +85,34 @@
     "fatherId": "nurbay-matigul"
   },
   {
+    "name": "Тәуір",
+    "id": "tauir-abyla",
+    "fatherId": "abyla-nurbay"
+  },
+  {
+    "name": "Қадір",
+    "id": "qadir-abyla",
+    "fatherId": "abyla-nurbay"
+  },
+  {
+    "name": "Көлдей",
+    "id": "koldey-abyla",
+    "fatherId": "abyla-nurbay"
+  },
+  {
+    "name": "Жарылқап",
+    "id": "zharylqap-abyla",
+    "fatherId": "abyla-nurbay"
+  },
+  {
     "name": "Досымбет",
     "id": "dosymbet-abyla",
     "fatherId": "abyla-nurbay"
+  },
+  {
+    "name": "Беріш",
+    "id": "berish-dosymbet",
+    "fatherId": "dosymbet-abyla"
   },
   {
     "name": "Үмбетәлі",
@@ -103,6 +128,16 @@
     "name": "Құлмұрат",
     "id": "qulmurat-quat",
     "fatherId": "quat-umbetali"
+  },
+  {
+    "name": "Қонақбай",
+    "id": "qonaqbay-qulmurat",
+    "fatherId": "qulmurat-quat"
+  },
+  {
+    "name": "Задаш",
+    "id": "zadash-qulmurat",
+    "fatherId": "qulmurat-quat"
   },
   {
     "name": "Көшербай",
@@ -135,9 +170,14 @@
     "fatherId": "umbetali-dosymbet"
   },
   {
-    "name": "Құлахмет",
-    "id": "qulakhmet-qobylash",
+    "name": "Өтенияз",
+    "id": "oteniyaz-qobylash",
     "fatherId": "qobylash-umbetali"
+  },
+  {
+    "name": "Ұрмет",
+    "id": "urmet-oteniyaz",
+    "fatherId": "oteniyaz-qobylash"
   },
   {
     "name": "Құлмағанбет",
@@ -150,29 +190,34 @@
     "fatherId": "qulmaganbet-qobylash"
   },
   {
+    "name": "Әділхан",
+    "id": "adilkhan-qulmaganbet",
+    "fatherId": "qulmaganbet-qobylash"
+  },
+  {
+    "name": "Құлахмет",
+    "id": "qulakhmet-qulmaganbet",
+    "fatherId": "qulmaganbet-qobylash"
+  },
+  {
     "name": "Сейтәлі",
     "id": "seytali-umbetali",
     "fatherId": "umbetali-dosymbet"
   },
   {
-    "name": "Сейтәлі",
-    "id": "seytali-seytali",
-    "fatherId": "seytali-umbetali"
-  },
-  {
     "name": "Әжарқын",
     "id": "azharqyn-seytali",
-    "fatherId": "seytali-seytali"
+    "fatherId": "seytali-umbetali"
   },
   {
     "name": "Онталап",
     "id": "ontalap-seytali",
-    "fatherId": "seytali-seytali"
+    "fatherId": "seytali-umbetali"
   },
   {
     "name": "Ондас",
     "id": "ondas-seytali",
-    "fatherId": "seytali-seytali"
+    "fatherId": "seytali-umbetali"
   },
   {
     "name": "Қапақ",
@@ -180,9 +225,19 @@
     "fatherId": "umbetali-dosymbet"
   },
   {
+    "name": "Ахмет",
+    "id": "akhmet-qapaq",
+    "fatherId": "qapaq-umbetali"
+  },
+  {
     "name": "Құттыбек",
     "id": "quttybek-umbetali",
     "fatherId": "umbetali-dosymbet"
+  },
+  {
+    "name": "Қуанышбай",
+    "id": "quanyshbay-quttybek",
+    "fatherId": "quttybek-umbetali"
   },
   {
     "name": "Құлмырза",
@@ -258,6 +313,92 @@
     "motherId": "qonyrsha-permebay-qulmyrza"
   },
   {
+    "name": "Құлнияз",
+    "id": "qulniyaz-qulmyrza",
+    "fatherId": "qulmyrza-umbetali"
+  },
+  {
+    "name": "Құдайберді",
+    "id": "qudayberdi-umbetali",
+    "fatherId": "umbetali-dosymbet"
+  },
+  {
+    "name": "Мәмбетәлі",
+    "id": "mambetali-dosymbet",
+    "fatherId": "dosymbet-abyla"
+  },
+  {
+    "name": "Есбол",
+    "id": "esbol-abyla",
+    "fatherId": "abyla-nurbay"
+  },
+  {
+    "name": "Досбол",
+    "id": "dosbol-abyla",
+    "fatherId": "abyla-nurbay"
+  },
+  {
+    "name": "Амалдық",
+    "id": "amaldyq-nurbay",
+    "fatherId": "nurbay-matigul"
+  },
+  {
+    "name": "Әйтбек",
+    "id": "aytbek-nurbay",
+    "fatherId": "nurbay-matigul"
+  },
+  {
+    "name": "Назарбек",
+    "id": "nazarbek-nurbay",
+    "fatherId": "nurbay-matigul"
+  },
+  {
+    "name": "Марқа",
+    "id": "marqa-nurbay",
+    "fatherId": "nurbay-matigul"
+  },
+  {
+    "name": "Еділбек",
+    "id": "edilbek-nurbay",
+    "fatherId": "nurbay-matigul"
+  },
+  {
+    "name": "Қожабек",
+    "id": "qozhabek-nurbay",
+    "fatherId": "nurbay-matigul"
+  },
+  {
+    "name": "Қосуақ",
+    "id": "qosuaq-nurbay",
+    "fatherId": "nurbay-matigul"
+  },
+  {
+    "name": "Өмірқұл",
+    "id": "omirqul-matigul",
+    "fatherId": "matigul-syrlybay",
+    "notes": "Тоғыс деп те аталады."
+  },
+  {
+    "name": "Көбек",
+    "id": "kobek-matigul",
+    "fatherId": "matigul-syrlybay"
+  },
+  {
+    "name": "Құрымбай",
+    "id": "qurymbay-matigul",
+    "fatherId": "matigul-syrlybay"
+  },
+  {
+    "name": "Қалыбай",
+    "id": "qalybay-matigul",
+    "fatherId": "matigul-syrlybay"
+  },
+  {
+    "name": "Бақай",
+    "id": "baqay-matigul",
+    "fatherId": "matigul-syrlybay"
+  },
+  {
     "name": "Дәулетияр",
     "id": "dauletiyar-syrlybay",
     "fatherId": "syrlybay-asan"
@@ -278,6 +419,11 @@
     "fatherId": "syrlybay-asan"
   },
   {
+    "name": "Мырзағұл",
+    "id": "myrzagul-syrlybay",
+    "fatherId": "syrlybay-asan"
+  },
+  {
     "name": "Өтеп",
     "id": "otep-asan",
     "fatherId": "asan-kishkene"
@@ -288,13 +434,33 @@
     "fatherId": "asan-kishkene"
   },
   {
-    "name": "Құдайназар",
-    "id": "qudaynazar-asan",
+    "name": "Құдайберді",
+    "id": "qudayberdi-asan",
+    "fatherId": "asan-kishkene"
+  },
+  {
+    "name": "Шонтай",
+    "id": "shontay-asan",
     "fatherId": "asan-kishkene"
   },
   {
     "name": "Үсен",
     "id": "usen-kishkene",
+    "fatherId": "kishkene-esenaly"
+  },
+  {
+    "name": "Құрманай",
+    "id": "qurmanay-kishkene",
+    "fatherId": "kishkene-esenaly"
+  },
+  {
+    "name": "Құттық",
+    "id": "quttyq-kishkene",
+    "fatherId": "kishkene-esenaly"
+  },
+  {
+    "name": "Сары",
+    "id": "sary-kishkene",
     "fatherId": "kishkene-esenaly"
   },
   {
@@ -388,8 +554,23 @@
     "fatherId": "ayt-bolek"
   },
   {
+    "name": "Сарша",
+    "id": "sarsha-ayt",
+    "fatherId": "ayt-bolek"
+  },
+  {
+    "name": "Жолтума",
+    "id": "zholtuma-ayt",
+    "fatherId": "ayt-bolek"
+  },
+  {
     "name": "Бұжыр",
     "id": "buzhyr-bolek",
+    "fatherId": "bolek-maku-qalu"
+  },
+  {
+    "name": "Орманбай",
+    "id": "ormanbay-bolek",
     "fatherId": "bolek-maku-qalu"
   },
   {
@@ -423,30 +604,81 @@
     "fatherId": "kishi-zhuz"
   },
   {
-    "name": "Айбас",
-    "id": "aybas",
+    "name": "Ұлы жүз",
+    "id": "uly-zhuz",
     "fatherId": null
+  },
+  {
+    "name": "Дулат",
+    "id": "dulat-uly-zhuz",
+    "fatherId": "uly-zhuz"
+  },
+  {
+    "name": "Шымыр",
+    "id": "shymyr-dulat",
+    "fatherId": "dulat-uly-zhuz"
+  },
+  {
+    "name": "Шынболат (Шынқожа)",
+    "id": "shynbolat-shynqozha-shymyr",
+    "fatherId": "shymyr-dulat"
+  },
+  {
+    "name": "Бозан (Көкірек)",
+    "id": "bozan-kokirek-shynbolat-shynqozha",
+    "fatherId": "shynbolat-shynqozha-shymyr"
+  },
+  {
+    "name": "Еркімбай",
+    "id": "erkimbay-bozan-kokirek",
+    "fatherId": "bozan-kokirek-shynbolat-shynqozha"
+  },
+  {
+    "name": "Туаш (Тауас)",
+    "id": "tuash-tauas-erkimbay",
+    "fatherId": "erkimbay-bozan-kokirek"
+  },
+  {
+    "name": "Сары",
+    "id": "sary-tuash-tauas",
+    "fatherId": "tuash-tauas-erkimbay"
+  },
+  {
+    "name": "Қанет",
+    "id": "qanet-sary",
+    "fatherId": "sary-tuash-tauas"
+  },
+  {
+    "name": "Кенжебай",
+    "id": "kenzhebay-qanet",
+    "fatherId": "qanet-sary"
+  },
+  {
+    "name": "Айбас",
+    "id": "aybas-kenzhebay",
+    "fatherId": "kenzhebay-qanet"
   },
   {
     "name": "Сара",
     "gender": "female",
-    "spouseOf": "aybas",
+    "spouseOf": "aybas-kenzhebay",
     "fatherId": null,
-    "id": "sara-aybas"
+    "id": "sara-aybas-kenzhebay"
   },
   {
     "name": "Сандуғаш",
     "id": "sandugash-aybas",
-    "fatherId": "aybas",
+    "fatherId": "aybas-kenzhebay",
     "lastName": "Кенжебаева",
     "gender": "female",
     "spouseOf": "berik-eraly",
-    "motherId": "sara-aybas"
+    "motherId": "sara-aybas-kenzhebay"
   },
   {
-    "name": "Ұлы жүз",
-    "id": "uly-zhuz",
-    "fatherId": null
+    "name": "Тілеп",
+    "id": "tilep-aybas",
+    "fatherId": "aybas-kenzhebay",
+    "motherId": "sara-aybas-kenzhebay"
   },
   {
     "name": "Қаңлы",
@@ -524,19 +756,35 @@
     "fatherId": "tanta-qara-qanly"
   },
   {
-    "name": "X",
-    "id": "x-tanta",
-    "fatherId": "tanta-qara-qanly"
+    "name": "Қарабай",
+    "id": "qarabay-sertek",
+    "fatherId": "sertek-tanta",
+    "notes": "tumalas.kz шежіресінде әкесі «Сертек-Тұра» деп жазылған."
+  },
+  {
+    "name": "Таласбай",
+    "id": "talasbay-qarabay",
+    "fatherId": "qarabay-sertek"
+  },
+  {
+    "name": "Қарымбай",
+    "id": "qarymbay-talasbay",
+    "fatherId": "talasbay-qarabay"
+  },
+  {
+    "name": "Нышанқұл",
+    "id": "nyshanqul-qarymbay",
+    "fatherId": "qarymbay-talasbay"
   },
   {
     "name": "Дадабай",
-    "id": "dadabay-x",
-    "fatherId": "x-tanta"
+    "id": "dadabay-qarymbay",
+    "fatherId": "qarymbay-talasbay"
   },
   {
     "name": "Ералы",
     "id": "eraly-dadabay",
-    "fatherId": "dadabay-x",
+    "fatherId": "dadabay-qarymbay",
     "lastName": "Дадабаев"
   },
   {
@@ -545,6 +793,24 @@
     "spouseOf": "eraly-dadabay",
     "fatherId": null,
     "id": "aset-eraly-dadabay"
+  },
+  {
+    "name": "Серік",
+    "id": "serik-eraly",
+    "fatherId": "eraly-dadabay",
+    "motherId": "aset-eraly-dadabay"
+  },
+  {
+    "name": "Бейбит",
+    "id": "beybit-eraly",
+    "fatherId": "eraly-dadabay",
+    "motherId": "aset-eraly-dadabay"
+  },
+  {
+    "name": "Бегалы",
+    "id": "begaly-eraly",
+    "fatherId": "eraly-dadabay",
+    "motherId": "aset-eraly-dadabay"
   },
   {
     "name": "Берік",
@@ -590,6 +856,12 @@
     "gender": "female",
     "birthday": "2009-01-19",
     "motherId": "sandugash-aybas"
+  },
+  {
+    "name": "Медеубай",
+    "id": "medeubay-eraly",
+    "fatherId": "eraly-dadabay",
+    "motherId": "aset-eraly-dadabay"
   },
   {
     "name": "Оразымбет",
