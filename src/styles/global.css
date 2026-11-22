@@ -13,6 +13,7 @@
   --line-color: rgba(0, 0, 0, 0.12);
   --font-family: 'Montserrat', sans-serif;
   --transition-speed: 0.25s;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -26,7 +27,7 @@ body {
   background: var(--bg-color);
   background-image: var(--bg-gradient);
   color: var(--text-primary);
-  min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden; /* App feels like a native canvas */
   position: relative;
 }
@@ -34,15 +35,20 @@ body {
 body::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-image: linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
                     linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 30px 30px;
   pointer-events: none;
   z-index: 0;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 /* Glassmorphism utility */
@@ -79,4 +85,19 @@ body::before {
   background: #000000;
   color: #ffffff;
   border-color: #000000;
+}
+
+/* Selecting a person morphs the tree into its new arrangement (see TreeApp.jsx).
+   Cards, panel, header and controls are named, so they keep their stacking order. */
+::view-transition-group(*) {
+  animation-duration: 0.4s;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

@@ -1,21 +1,26 @@
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
   background: var(--bg-color);
+}
+
+.app-container {
+  /* The header is drawn under the notch/status bar, then padded clear of it */
+  --header-height: calc(60px + env(safe-area-inset-top, 0px));
 }
 
 .app-header {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
+  inset: 0 0 auto;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: env(safe-area-inset-top, 0px) max(2rem, env(safe-area-inset-right, 0px)) 0
+    max(2rem, env(safe-area-inset-left, 0px));
   z-index: 10;
+  view-transition-name: app-header;
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -28,9 +33,6 @@
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--text-primary);
-}
-
-.app-header h1 {
   min-width: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -65,23 +67,22 @@
   flex: 1;
   position: relative;
   overflow: hidden;
-  height: calc(100vh - 60px);
-  margin-top: 60px;
+  margin-top: var(--header-height);
 }
 
 @media (max-width: 767px) {
+  .app-container {
+    --header-height: calc(50px + env(safe-area-inset-top, 0px));
+  }
+
   .app-header {
-    height: 50px;
-    padding: 0 1rem;
+    padding-inline: max(1rem, env(safe-area-inset-left, 0px)) max(1rem, env(safe-area-inset-right, 0px));
   }
 
   .app-header h1 {
     font-size: 0.8rem;
     letter-spacing: 0.12em;
-  }
-
-  /* On phones the title gives up space first so search stays usable */
-  .app-header h1 {
+    /* On phones the title gives up space first so search stays usable */
     flex: 1 1 0;
   }
 
@@ -89,11 +90,6 @@
     flex: 0 0 auto;
     gap: 0.5rem;
     margin-left: 0.5rem;
-  }
-
-  .app-main {
-    height: calc(100vh - 50px);
-    margin-top: 50px;
   }
 
   .btn {

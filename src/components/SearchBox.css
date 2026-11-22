@@ -31,7 +31,7 @@
   list-style: none;
   border-radius: 6px;
   padding: 0.3rem;
-  max-height: 60vh;
+  max-height: 60dvh;
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);

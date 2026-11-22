@@ -32,6 +32,31 @@ export function TreeApp() {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const selectedRef = useRef(selectedNodeId);
   selectedRef.current = selectedNodeId;
+  const pendingCommits = useRef([]);
+
+  // Resolves view transitions waiting for a new selection to reach the DOM.
+  useLayoutEffect(() => {
+    for (const resolve of pendingCommits.current.splice(0)) resolve();
+  }, [selectedNodeId]);
+
+  // Morphs the tree into its new arrangement (cards are named per person in TreeCanvas).
+  // Without View Transitions support the selection simply updates.
+  const selectWithTransition = useCallback((id) => {
+    if (!document.startViewTransition || document.hidden) {
+      setSelectedNodeId(id);
+      return;
+    }
+    const transition = document.startViewTransition(
+      () =>
+        new Promise((resolve) => {
+          pendingCommits.current.push(resolve);
+          setSelectedNodeId(id);
+          setTimeout(resolve, 1000); // never hold the page frozen if nothing re-renders
+        }),
+    );
+    // A skipped transition (tab hidden, newer selection) still applies the update; ignore it.
+    transition.ready.catch(() => {});
+  }, []);
 
   // Client-only state is restored after hydration (the server render uses defaults);
   // a layout effect applies it before the first paint.
@@ -44,12 +69,13 @@ export function TreeApp() {
 
     const onHashChange = () => {
       // An empty/unknown hash (e.g. going back to the first entry) means the default person
-      setSelectedNodeId(idFromHash() || DEFAULT_FOCUS);
+      const id = idFromHash() || DEFAULT_FOCUS;
+      if (id !== selectedRef.current) selectWithTransition(id);
       setIsPanelOpen(true);
     };
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
+  }, [selectWithTransition]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -67,10 +93,10 @@ export function TreeApp() {
       setIsPanelOpen((prev) => open || !prev);
       return;
     }
-    setSelectedNodeId(id);
+    selectWithTransition(id);
     setIsPanelOpen(true);
     history.pushState(null, "", `#${encodeURIComponent(id)}`);
-  }, []);
+  }, [selectWithTransition]);
 
   const handleClose = useCallback(() => {
     setIsPanelOpen(false);

@@ -10,8 +10,8 @@
   border: 1px solid var(--card-border);
   color: var(--text-primary);
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.04);
-  transition: var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
-  transition-property: transform, background-color, border-color, color, box-shadow;
+  transition: var(--transition-speed) var(--ease-out-expo);
+  transition-property: translate, background-color, border-color, color, box-shadow;
   position: relative;
   z-index: 2;
 }
@@ -22,7 +22,9 @@
 }
 
 .member-node:hover {
-  transform: translateY(-2px);
+  @media (prefers-reduced-motion: no-preference) {
+    translate: 0 -2px;
+  }
   border-color: rgba(0, 0, 0, 0.2);
   background: #ffffff;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
@@ -91,10 +93,6 @@
   font-weight: 300;
   opacity: 0.65;
   letter-spacing: 0.01em;
-}
-
-.member-node.selected .name-container {
-  color: #ffffff;
 }
 
 

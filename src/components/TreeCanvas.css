@@ -5,6 +5,8 @@
   position: relative;
   overflow: hidden;
   touch-action: none; /* pan/pinch are handled in JS */
+  -webkit-user-select: none; /* dragging must not select card text */
+  user-select: none;
   --canvas-center-y: 50%;
 }
 
@@ -71,8 +73,8 @@
 
 .canvas-controls {
   position: absolute;
-  bottom: 2rem;
-  left: 2rem;
+  bottom: max(2rem, env(safe-area-inset-bottom, 0px));
+  left: max(2rem, env(safe-area-inset-left, 0px));
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -80,6 +82,7 @@
   border-radius: 8px;
   z-index: 10;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+  view-transition-name: canvas-controls;
 }
 
 .control-btn {
@@ -112,20 +115,20 @@
 @media (max-width: 767px) {
   .canvas-container.has-selected {
     /* Shift center upward to leave space for the bottom sheet */
-    --canvas-center-y: 20vh;
+    --canvas-center-y: 20dvh;
   }
 
   .canvas-controls {
-    bottom: 1.5rem;
-    left: 1rem;
+    bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+    left: max(1rem, env(safe-area-inset-left, 0px));
     flex-direction: column;
     gap: 0.4rem;
     padding: 0.4rem;
-    transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: bottom 0.3s var(--ease-out-expo);
   }
 
   .canvas-container.has-selected .canvas-controls {
-    bottom: calc(60vh + 1rem);
+    bottom: calc(60dvh + 1rem);
   }
 
   .control-btn {

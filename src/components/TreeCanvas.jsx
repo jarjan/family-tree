@@ -12,8 +12,8 @@ const DRAG_THRESHOLD = 5; // px of movement before a press counts as a drag, not
 const WHEEL_SETTLE_MS = 150; // quiet time after the last wheel event before committing the zoom
 
 const clampScale = (s) => Math.min(Math.max(MIN_SCALE, s), MAX_SCALE);
-const touchDistance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-const touchMidpoint = (a, b) => ({
+const pointDistance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+const pointMidpoint = (a, b) => ({
   x: (a.clientX + b.clientX) / 2,
   y: (a.clientY + b.clientY) / 2,
 });
@@ -27,6 +27,7 @@ export function TreeCanvas({ data, relatives, onSelect, selectedId, isPanelOpen 
   const containerRef = useRef(null);
   const canvasLayerRef = useRef(null);
   const gesture = useRef(null); // active drag or pinch
+  const pointers = useRef(new Map()); // active pointerId -> latest { clientX, clientY }
   const suppressClick = useRef(false);
   const wheelTimer = useRef(null);
 
@@ -56,11 +57,11 @@ export function TreeCanvas({ data, relatives, onSelect, selectedId, isPanelOpen 
         key={`node-${node.data.id}`}
         className="node-wrapper"
         style={{
-          position: "absolute",
-          transform: "translate(-50%, -50%)",
           left: `${node.x}px`,
           top: `${node.y}px`,
           "--z-index": node.data.id === selectedId ? 10 : 1,
+          // Lets a selection change morph each card from its old position to its new one
+          viewTransitionName: `node-${node.data.id}`,
         }}
       >
         <MemberNode data={node.data} isSelected={node.data.id === selectedId} />
@@ -120,16 +121,17 @@ export function TreeCanvas({ data, relatives, onSelect, selectedId, isPanelOpen 
     };
   };
 
-  // --- Pointer handling
+  // --- Pointer handling (mouse, touch and pen through one set of Pointer Events)
 
-  const startDrag = (clientX, clientY) => {
+  const startDrag = (clientX, clientY, moved = false) => {
     gesture.current = {
       type: "drag",
       startX: clientX,
       startY: clientY,
       base: transformRef.current,
-      moved: false,
+      moved,
     };
+    if (moved) setInstant(true);
   };
 
   const moveDrag = (clientX, clientY) => {
@@ -144,6 +146,30 @@ export function TreeCanvas({ data, relatives, onSelect, selectedId, isPanelOpen 
     applyTransform({ ...g.base, x: g.base.x + dx, y: g.base.y + dy });
   };
 
+  const startPinch = (a, b) => {
+    gesture.current = {
+      type: "pinch",
+      startDist: pointDistance(a, b) || 1,
+      startMid: pointMidpoint(a, b),
+      base: transformRef.current,
+      moved: true,
+    };
+    setInstant(true);
+  };
+
+  const movePinch = (a, b) => {
+    const g = gesture.current;
+    const mid = pointMidpoint(a, b);
+    const scale = g.base.scale * (pointDistance(a, b) / g.startDist);
+    // Zoom around the starting midpoint, then follow the fingers as they pan.
+    const zoomed = zoomAround(g.startMid.x, g.startMid.y, scale, g.base);
+    applyTransform({
+      ...zoomed,
+      x: zoomed.x + (mid.x - g.startMid.x),
+      y: zoomed.y + (mid.y - g.startMid.y),
+    });
+  };
+
   const endGesture = () => {
     const g = gesture.current;
     if (!g) return;
@@ -155,14 +181,51 @@ export function TreeCanvas({ data, relatives, onSelect, selectedId, isPanelOpen 
     }
   };
 
-  const onMouseDown = (e) => {
+  const onPointerDown = (e) => {
     if (e.button !== 0 || e.target.closest(".canvas-controls")) return;
-    suppressClick.current = false;
-    startDrag(e.clientX, e.clientY);
+    // A new primary pointer starts a fresh gesture; drop anything left over.
+    if (e.isPrimary) pointers.current.clear();
+    pointers.current.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+    if (pointers.current.size === 1) {
+      suppressClick.current = false;
+      startDrag(e.clientX, e.clientY);
+    } else if (pointers.current.size === 2) {
+      const [a, b] = pointers.current.values();
+      startPinch(a, b);
+    }
   };
 
-  const onMouseMove = (e) => {
-    if (gesture.current?.type === "drag") moveDrag(e.clientX, e.clientY);
+  const onPointerMove = (e) => {
+    if (!pointers.current.has(e.pointerId)) return;
+    pointers.current.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+    const g = gesture.current;
+    if (!g) return;
+    if (g.type === "drag") {
+      moveDrag(e.clientX, e.clientY);
+      // Capture only once it is a real drag, so a plain tap still clicks the node under it.
+      const el = e.currentTarget;
+      if (g.moved && el.isConnected && !el.hasPointerCapture(e.pointerId)) {
+        try {
+          el.setPointerCapture(e.pointerId);
+        } catch {
+          // The pointer is already gone (e.g. released outside the window); keep dragging uncaptured.
+        }
+      }
+    } else if (g.type === "pinch" && pointers.current.size === 2) {
+      const [a, b] = pointers.current.values();
+      movePinch(a, b);
+    }
+  };
+
+  const onPointerUp = (e) => {
+    if (!pointers.current.delete(e.pointerId)) return;
+    const wasPinch = gesture.current?.type === "pinch";
+    endGesture();
+    // Lifting one finger of a pinch continues as a drag with the other.
+    if (wasPinch && pointers.current.size === 1) {
+      const [rest] = pointers.current.values();
+      startDrag(rest.clientX, rest.clientY, true);
+    }
   };
 
   // A drag that ends over a node must not also select it.
@@ -189,58 +252,6 @@ export function TreeCanvas({ data, relatives, onSelect, selectedId, isPanelOpen 
     }, WHEEL_SETTLE_MS);
   };
 
-  const startPinch = (a, b) => {
-    const mid = touchMidpoint(a, b);
-    gesture.current = {
-      type: "pinch",
-      startDist: touchDistance(a, b) || 1,
-      startMid: mid,
-      base: transformRef.current,
-      moved: true,
-    };
-    setInstant(true);
-  };
-
-  const onTouchStart = (e) => {
-    if (e.target.closest(".canvas-controls")) return;
-    if (e.touches.length === 1) {
-      suppressClick.current = false;
-      startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    } else if (e.touches.length === 2) {
-      startPinch(e.touches[0], e.touches[1]);
-    }
-  };
-
-  const onTouchMove = (e) => {
-    const g = gesture.current;
-    if (!g) return;
-    if (g.type === "drag" && e.touches.length === 1) {
-      moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-    } else if (g.type === "pinch" && e.touches.length === 2) {
-      const [a, b] = e.touches;
-      const mid = touchMidpoint(a, b);
-      const scale = g.base.scale * (touchDistance(a, b) / g.startDist);
-      // Zoom around the starting midpoint, then follow the fingers as they pan.
-      const zoomed = zoomAround(g.startMid.x, g.startMid.y, scale, g.base);
-      applyTransform({
-        ...zoomed,
-        x: zoomed.x + (mid.x - g.startMid.x),
-        y: zoomed.y + (mid.y - g.startMid.y),
-      });
-    }
-  };
-
-  const onTouchEnd = (e) => {
-    const wasPinch = gesture.current?.type === "pinch";
-    endGesture();
-    // Lifting one finger of a pinch continues as a drag with the other.
-    if (wasPinch && e.touches.length === 1) {
-      startDrag(e.touches[0].clientX, e.touches[0].clientY);
-      gesture.current.moved = true;
-      setInstant(true);
-    }
-  };
-
   // --- Controls
 
   const zoomBy = (factor) => {
@@ -254,53 +265,27 @@ export function TreeCanvas({ data, relatives, onSelect, selectedId, isPanelOpen 
     <div
       ref={containerRef}
       className={`canvas-container ${selectedId && isPanelOpen ? "has-selected" : ""}`}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={endGesture}
-      onMouseLeave={endGesture}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
       onClickCapture={onClickCapture}
       onWheel={onWheel}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      onTouchCancel={onTouchEnd}
     >
       <div
         ref={canvasLayerRef}
         className="canvas-layer"
         style={{
-          position: "absolute",
-          top: "var(--canvas-center-y, 50%)",
-          left: "50%",
-          transformOrigin: "0 0",
-          transform: "translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--scale, 1))",
-          transition: "var(--transition-style, transform 0.05s linear)",
           "--tx": `${transform.x}px`,
           "--ty": `${transform.y}px`,
           "--scale": transform.scale,
         }}
       >
-        <svg
-          className="edges-layer"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            overflow: "visible",
-          }}
-        >
+        <svg className="edges-layer" aria-hidden="true">
           {renderedLinks}
         </svg>
 
-        <div
-          className="nodes-layer"
-          onClick={onNodeClick}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-          }}
-        >
+        <div className="nodes-layer" onClick={onNodeClick}>
           {renderedNodes}
         </div>
       </div>
