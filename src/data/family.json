@@ -550,11 +550,41 @@
     "fatherId": "nauryzali-sartaban-segizbay"
   },
   {
+    "name": "Нағи",
+    "id": "nagi-adil",
+    "fatherId": "adil-nauryzali-sartaban"
+  },
+  {
     "name": "Алмағамбет",
     "id": "almagambet-nauryzali-sartaban",
     "fatherId": "nauryzali-sartaban-segizbay",
     "lastName": "Сартабанов",
     "notes": "1906 жылы Шалқар ауданы, №1 ауылда туған. Ұлы Отан соғысына қатысқан. tumalas.kz шежіресінде Алмағанбет деп жазылған. Дерек: pamyat-naroda.ru."
+  },
+  {
+    "name": "Қалдыбай",
+    "id": "qaldybay-almagambet",
+    "fatherId": "almagambet-nauryzali-sartaban"
+  },
+  {
+    "name": "Қойшыбай",
+    "id": "qoyshybay-almagambet",
+    "fatherId": "almagambet-nauryzali-sartaban"
+  },
+  {
+    "name": "Рай",
+    "id": "ray-almagambet",
+    "fatherId": "almagambet-nauryzali-sartaban"
+  },
+  {
+    "name": "Жайшырақ",
+    "id": "zhayshyraq-almagambet",
+    "fatherId": "almagambet-nauryzali-sartaban"
+  },
+  {
+    "name": "Жайжан",
+    "id": "zhayzhan-almagambet",
+    "fatherId": "almagambet-nauryzali-sartaban"
   },
   {
     "name": "Бақыт",
@@ -715,6 +745,11 @@
     "fatherId": "tuash-tauas-erkimbay"
   },
   {
+    "name": "Малай",
+    "id": "malay-sary",
+    "fatherId": "sary-tuash-tauas"
+  },
+  {
     "name": "Қанет",
     "id": "qanet-sary",
     "fatherId": "sary-tuash-tauas"
@@ -750,6 +785,16 @@
     "id": "tilep-aybas",
     "fatherId": "aybas-kenzhebay",
     "motherId": "sara-aybas-kenzhebay"
+  },
+  {
+    "name": "Қойбас",
+    "id": "qoybas-kenzhebay",
+    "fatherId": "kenzhebay-qanet"
+  },
+  {
+    "name": "Кенжеқұл",
+    "id": "kenzhequl-qanet",
+    "fatherId": "qanet-sary"
   },
   {
     "name": "Қаңлы",
