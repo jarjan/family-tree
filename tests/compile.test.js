@@ -142,3 +142,62 @@ test('compiler - fails on invalid data instead of writing it', () => {
 test('compiler - throws when the source file is missing', () => {
   assert.throws(() => main(path.join(__dirname, 'does-not-exist.txt'), '/dev/null'), /not found/);
 });
+
+// Line-level checks: mistakes that used to be silently dropped or misattributed.
+const problemsOf = (content) => {
+  try {
+    compileString(content);
+    return [];
+  } catch (err) {
+    return err.message.split('\n').slice(1).map((l) => l.replace(/^\s*- /, ''));
+  }
+};
+
+test('compiler - each generation must be exactly 2 spaces deeper', () => {
+  assert.deepEqual(problemsOf('- A\n  - B\n    - C\n  - D\n- E\n'), []);
+  const problems = problemsOf('- A\n      - Skipped\n   - Odd\n  - Fine\n');
+  assert.equal(problems.length, 2);
+  assert.match(problems[0], /^Line 2: indented 6 spaces, expected 2 \(one level under A\)/);
+  assert.match(problems[1], /^Line 3: indented 3 spaces, expected 2/);
+});
+
+test('compiler - a mis-indented line does not cause errors on the lines after it', () => {
+  const problems = problemsOf('- A\n   - Wrong\n  - Sibling\n    - Child\n');
+  assert.deepEqual(problems.map((p) => p.split(':')[0]), ['Line 2']);
+});
+
+test('compiler - tabs in indentation are rejected', () => {
+  assert.match(problemsOf('- A\n\t- B\n').join('\n'), /Line 2: indent with spaces, not tabs/);
+});
+
+test('compiler - lines without a "-" are errors, not skipped', () => {
+  assert.match(problemsOf('- A\n  B\n').join('\n'), /Line 2: must start with "-"/);
+});
+
+test('compiler - unknown attributes, unclosed brackets and trailing text are reported', () => {
+  const problems = problemsOf(
+    '- A [birthdate: 1990]\n- B [gender: female\n- C [lastName: X] extra\n- D []\n'
+  ).join('\n');
+  assert.match(problems, /Line 1: unknown attribute "birthdate"/);
+  assert.match(problems, /Line 2: unclosed or stray bracket/);
+  assert.match(problems, /Line 3: unexpected text after "\]": "extra"/);
+  assert.doesNotMatch(problems, /Line 4/);
+});
+
+test('compiler - several inline spouses are all created', () => {
+  const compiled = compileString(
+    '- Father [id: father] (spouse: One [notes: also (Бір)]) (spouse: Two)\n' +
+      '  - Son [motherId: two-father]\n'
+  );
+  const wives = compiled.filter((n) => n.spouseOf === 'father');
+  assert.deepEqual(wives.map((w) => w.id), ['one-father', 'two-father']);
+  assert.equal(wives[0].notes, 'also (Бір)');
+  assert.equal(compiled.find((n) => n.name === 'Son').motherId, 'two-father');
+  assert.equal(compiled.find((n) => n.id === 'father').name, 'Father');
+});
+
+test('compiler - an unreadable or nameless spouse is reported', () => {
+  const problems = problemsOf('- A (spouse: B\n- C (spouse: )\n').join('\n');
+  assert.match(problems, /Line 1: could not read the "\(spouse: \.\.\.\)" part/);
+  assert.match(problems, /Line 2: spouse is missing a name/);
+});

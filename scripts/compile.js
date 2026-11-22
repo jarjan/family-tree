@@ -41,11 +41,26 @@ function parseAttrs(attrsStr) {
   return res;
 }
 
-/** Splits `Name [attrs]` into the name and its parsed attributes. */
+/**
+ * Splits `Name [attrs]` into the name and its parsed attributes, plus a list of
+ * problems for text that would otherwise be silently dropped.
+ */
 function parseEntry(text) {
-  const bracket = text.match(/\[([^\]]+)\]/);
-  if (!bracket) return { name: text.trim(), attrs: {} };
-  return { name: text.slice(0, bracket.index).trim(), attrs: parseAttrs(bracket[1].trim()) };
+  const problems = [];
+  const bracket = text.match(/\[([^\]]*)\]/);
+  const name = (bracket ? text.slice(0, bracket.index) : text).trim();
+  if (/[[\]]/.test(name)) problems.push(`unclosed or stray bracket in "${name}"`);
+  if (!bracket) return { name, attrs: {}, problems };
+
+  const attrsStr = bracket[1].trim();
+  const firstKey = attrsStr.search(ATTR_KEY_REGEX);
+  if (attrsStr && firstKey !== 0) {
+    const unknown = (firstKey === -1 ? attrsStr : attrsStr.slice(0, firstKey)).split(":")[0].trim();
+    problems.push(`unknown attribute "${unknown}" (known: ${ATTR_KEYWORDS.join(", ")})`);
+  }
+  const after = text.slice(bracket.index + bracket[0].length).trim();
+  if (after) problems.push(`unexpected text after "]": "${after}"`);
+  return { name, attrs: parseAttrs(attrsStr), problems };
 }
 
 /**
@@ -106,12 +121,19 @@ function pick(attrs, keys) {
   return Object.fromEntries(keys.filter((k) => attrs[k] !== undefined).map((k) => [k, attrs[k]]));
 }
 
+const INDENT = 2; // spaces per generation
+
+// `(spouse: Name [attrs])`; the attributes may contain parentheses, e.g. in notes.
+const SPOUSE_REGEX = /\(\s*spouse:\s*([^()[\]]*(?:\[[^\]]*\])?)\s*\)/g;
+
 /**
- * Line format: `- Name [attrs] (spouse: Name [attrs])`. Indentation makes a line
- * the child of the nearest less-indented line above it (its father).
+ * Line format: `- Name [attrs] (spouse: Name [attrs]) (spouse: ...)`. Each line is
+ * indented exactly one level (2 spaces) deeper than the line of its father.
+ * Returns the nodes and a list of problems, each prefixed with its line number.
  */
 function parseLines(lines) {
   const nodes = [];
+  const errors = [];
   const usedIds = new Set();
   const stack = []; // ancestors of the current line: { indent, node }
 
@@ -124,21 +146,37 @@ function parseLines(lines) {
   };
 
   lines.forEach((rawLine, i) => {
+    const report = (message) => errors.push(`Line ${i + 1}: ${message}`);
     const line = rawLine.trim();
     if (!line || line.startsWith("#")) return;
     if (!line.startsWith("-")) {
-      console.warn(`Warning: Line ${i + 1} does not start with '-' and will be skipped.`);
+      report(`must start with "-" (or "#" for a comment)`);
       return;
     }
 
-    const indent = rawLine.length - rawLine.trimStart().length;
+    const leading = rawLine.slice(0, rawLine.length - rawLine.trimStart().length);
+    if (leading.includes("\t")) report("indent with spaces, not tabs");
+    const indent = leading.length;
     while (stack.length && stack.at(-1).indent >= indent) stack.pop();
     const father = stack.at(-1)?.node ?? null;
+    const expected = father ? stack.at(-1).indent + INDENT : 0;
+    const indentOk = indent === expected;
+    if (!indentOk) {
+      const spaces = (n) => `${n} space${n === 1 ? "" : "s"}`;
+      report(
+        `indented ${spaces(indent)}, expected ${expected}` +
+          (father ? ` (one level under ${father.name})` : " (top level)") +
+          `; each generation is ${INDENT} spaces deeper than its father`,
+      );
+    }
 
-    const spouseMatch = rawLine.match(/\(\s*spouse:\s*([^)]+)\)/);
-    const mainText = spouseMatch ? rawLine.replace(spouseMatch[0], "") : rawLine;
-    const main = parseEntry(mainText.trim());
-    main.name = main.name.replace(/^-/, "").trim();
+    const spouseMatches = [...line.matchAll(SPOUSE_REGEX)];
+    const mainText = line.replace(SPOUSE_REGEX, "").trim();
+    if (/\(\s*spouse\s*:/.test(mainText)) report(`could not read the "(spouse: ...)" part`);
+
+    const main = parseEntry(mainText.slice(1));
+    main.problems.forEach(report);
+    if (!main.name) report("missing a name");
 
     const baseId = father ? `${slugify(main.name)}-${slugify(father.name)}` : slugify(main.name);
     const node = {
@@ -148,10 +186,16 @@ function parseLines(lines) {
       ...pick(main.attrs, ["lastName", "gender", "birthday", "motherId", "spouseOf", "notes"]),
     };
     nodes.push(node);
-    stack.push({ indent, node });
+    // A mis-indented line is not used as a father, so it doesn't cause errors on the lines after it.
+    if (indentOk) stack.push({ indent, node });
 
-    const spouse = spouseMatch && parseEntry(spouseMatch[1]);
-    if (spouse?.name) {
+    for (const match of spouseMatches) {
+      const spouse = parseEntry(match[1]);
+      spouse.problems.forEach((p) => report(`spouse: ${p}`));
+      if (!spouse.name) {
+        report("spouse is missing a name");
+        continue;
+      }
       nodes.push({
         name: spouse.name,
         gender: spouse.attrs.gender || "female",
@@ -174,7 +218,7 @@ function parseLines(lines) {
     if (node.fatherId && !node.motherId && wives?.length === 1) node.motherId = wives[0].id;
   }
 
-  return nodes;
+  return { nodes, errors };
 }
 
 function main(
@@ -183,9 +227,10 @@ function main(
 ) {
   if (!fs.existsSync(txtPath)) throw new Error(`${txtPath} not found.`);
 
-  const nodes = parseLines(fs.readFileSync(txtPath, "utf-8").split(/\r?\n/));
+  const { nodes, errors: parseErrors } = parseLines(fs.readFileSync(txtPath, "utf-8").split(/\r?\n/));
 
-  const errors = validateNodes(nodes);
+  // Line-level problems first: they are usually the cause of any data errors.
+  const errors = parseErrors.length ? parseErrors : validateNodes(nodes);
   if (errors.length > 0) {
     throw new Error(`${txtPath} has ${errors.length} problem(s):\n  - ${errors.join("\n  - ")}`);
   }

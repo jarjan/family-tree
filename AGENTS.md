@@ -36,17 +36,20 @@ Node.js `>=24` is required (`package.json` `engines`).
 Each line of `family.txt` is one person:
 
 ```text
-- Name [key: value, key: value] (spouse: Name [key: value])
+- Name [key: value, key: value] (spouse: Name [key: value]) (spouse: ...)
 ```
 
-- **Indentation** makes a person the child of the nearest less-indented line above, which sets their `fatherId` (a `fatherId:` attribute only applies to unindented, top-level lines).
+- **Indentation** sets the father: each person is indented exactly 2 spaces (no tabs) deeper than their father's line. A `fatherId:` attribute only applies to top-level lines.
 - Lines starting with `#` and blank lines are ignored. Every other line must start with `-`.
 - **Attributes:** `id`, `lastName`, `gender` (`male`/`female`; no gender is shown as male), `birthday` (`YYYY`, `YYYY-MM` or `YYYY-MM-DD`), `motherId`, `fatherId`, `spouseOf`, `notes`. A value runs until the next `, key:`, so notes may contain commas but not `]`.
 - **Ids** are slugs with Kazakh Cyrillic transliterated to Latin: `name-fathername` for a person (just `name` at the top level), `name-<husband's id>` for an inline spouse, with `-2`, `-3`... added on collisions. Give an explicit `id:` only when the generated one is unsuitable. Renaming a person changes their id, and renaming a father changes his children's ids too, which breaks shared links (`#id` in the URL) and any `spouseOf`/`motherId` pointing at them. The compiler reports those as dangling ids.
-- **Spouses:** an inline `(spouse: Name [...])` creates a woman (unless `gender:` says otherwise) married to that person. A wife who has her own ancestry in the tree is instead listed under her father with `gender: female, spouseOf: <husband's id>`.
+- **Spouses:** each inline `(spouse: Name [...])` creates a woman (unless `gender:` says otherwise) married to that person; a line may have several. A wife who has her own ancestry in the tree is instead listed under her father with `gender: female, spouseOf: <husband's id>`.
 - **Mothers:** a child's `motherId` is filled in only when the father has exactly one wife; with several wives, set `motherId:` on each child.
 - **Other parentheses** stay part of the displayed name, e.g. `Наурызәлі (Сартабан)` for an alias.
-- The compiler stops the build on duplicate or dangling ids, self-references, bad `gender`/`birthday` values and ancestry cycles.
+- The compiler stops the build and lists every problem with its line number:
+  - indentation that isn't exactly one level deeper, tabs, lines without `-`;
+  - unknown attribute names, an unclosed `[`, text after `]`, an unreadable or nameless spouse;
+  - then, once the lines are clean: duplicate or dangling ids, self-references, bad `gender`/`birthday` values and ancestry cycles.
 
 When adding research findings, treat a search result as a lead, not a fact: add a person or link only once a source shows it, and cite it at the end of `notes` (`Дерек: tumalas.kz.`). Notes are written in Kazakh. The repository is public, so leave out details about living people that shouldn't be on the website.
 
@@ -70,7 +73,7 @@ Keep relationship and layout logic in `relations.js` and `layout.js`, not in com
 
 ## Tests and deployment
 
-- `tests/compile.test.js`: parsing, ids, validation, and that the committed `family.json` is valid (so recompile before testing data changes).
+- `tests/compile.test.js`: parsing, ids, line-level checks, validation, and that the committed `family.json` is valid (so recompile before testing data changes).
 - `tests/relations.test.js`: relatives, including several wives, half-siblings and cycles.
 - `tests/layout.test.js`: for **every** person in `family.json`, no overlapping cards, each person rendered once, and links that join rendered cards.
 - `tests/i18n.test.js`: defaults, fallbacks and matching keys between languages.

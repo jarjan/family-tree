@@ -91,7 +91,9 @@ To edit the family tree data:
    ```
    *(Note: `npm run dev` and `npm run build` automatically compile `family.txt` as well)*
 
-The compiler fails with a list of problems if the data has duplicate ids, references to ids that don't exist, invalid `gender`/`birthday` values, or ancestry cycles.
+Each person sits exactly 2 spaces deeper than their father's line (spaces, not tabs), and a line may list several `(spouse: ...)` groups.
+
+The compiler fails with a list of problems and their line numbers if a line is mis-indented, has an unknown attribute, an unclosed `[` or stray text, or if the data has duplicate ids, references to ids that don't exist, invalid `gender`/`birthday` values, or ancestry cycles.
 
 A child's `motherId` is filled in automatically only when the father has exactly one wife. With several wives, set `motherId:` explicitly on each child.
 
