@@ -499,6 +499,112 @@
     "fatherId": "tileu-ayt"
   },
   {
+    "name": "Жалтума",
+    "id": "zhaltuma-aldaberdi",
+    "fatherId": "aldaberdi-tileu"
+  },
+  {
+    "name": "Тәңірберген",
+    "id": "tanirbergen-zhaltuma",
+    "fatherId": "zhaltuma-aldaberdi"
+  },
+  {
+    "name": "Сәмбет",
+    "id": "sambet-tanirbergen",
+    "fatherId": "tanirbergen-zhaltuma"
+  },
+  {
+    "name": "Есенқұл",
+    "id": "esenqul-sambet",
+    "fatherId": "sambet-tanirbergen"
+  },
+  {
+    "name": "Сандыбай",
+    "id": "sandybay-esenqul",
+    "fatherId": "esenqul-sambet"
+  },
+  {
+    "name": "Сәдіғұл",
+    "id": "sadigul-sandybay",
+    "fatherId": "sandybay-esenqul"
+  },
+  {
+    "name": "Сегізбай",
+    "id": "segizbay-sadigul",
+    "fatherId": "sadigul-sandybay"
+  },
+  {
+    "name": "Айтығұл",
+    "id": "aytygul-segizbay",
+    "fatherId": "segizbay-sadigul"
+  },
+  {
+    "name": "Наурызәлі (Сартабан)",
+    "id": "nauryzali-sartaban-segizbay",
+    "fatherId": "segizbay-sadigul",
+    "notes": "Сартабан деп аталған, балалары Сартабанов деген тегін алған. Дерек: tumalas.kz."
+  },
+  {
+    "name": "Әділ",
+    "id": "adil-nauryzali-sartaban",
+    "fatherId": "nauryzali-sartaban-segizbay"
+  },
+  {
+    "name": "Алмағамбет",
+    "id": "almagambet-nauryzali-sartaban",
+    "fatherId": "nauryzali-sartaban-segizbay",
+    "lastName": "Сартабанов",
+    "notes": "1906 жылы Шалқар ауданы, №1 ауылда туған. Ұлы Отан соғысына қатысқан. tumalas.kz шежіресінде Алмағанбет деп жазылған. Дерек: pamyat-naroda.ru."
+  },
+  {
+    "name": "Бақыт",
+    "id": "baqyt-nauryzali-sartaban",
+    "fatherId": "nauryzali-sartaban-segizbay",
+    "lastName": "Сартабанов",
+    "birthday": "1912-07-25",
+    "notes": "Ақтөбе облысы, Шалқар ауданы, №1 ауылда туған. Ұлы Отан соғысына офицер болып қатысқан: 3-Белорус майданы, 371 атқыштар дивизиясы. Қызыл Жұлдыз орденімен, Кёнигсбергті алғаны үшін, Германияны және Жапонияны жеңгені үшін медальдарымен марапатталған. Дерек: pamyat-naroda.ru."
+  },
+  {
+    "name": "Алданыш",
+    "gender": "female",
+    "spouseOf": "baqyt-nauryzali-sartaban",
+    "fatherId": null,
+    "id": "aldanysh-baqyt-nauryzali-sartaban"
+  },
+  {
+    "name": "Оралбай",
+    "id": "oralbay-baqyt",
+    "fatherId": "baqyt-nauryzali-sartaban",
+    "motherId": "aldanysh-baqyt-nauryzali-sartaban"
+  },
+  {
+    "name": "Нағашыбай",
+    "id": "nagashybay-baqyt",
+    "fatherId": "baqyt-nauryzali-sartaban",
+    "motherId": "aldanysh-baqyt-nauryzali-sartaban"
+  },
+  {
+    "name": "Елібай",
+    "id": "elibay-baqyt",
+    "fatherId": "baqyt-nauryzali-sartaban",
+    "motherId": "aldanysh-baqyt-nauryzali-sartaban"
+  },
+  {
+    "name": "Алтынай",
+    "id": "altynay-baqyt",
+    "fatherId": "baqyt-nauryzali-sartaban",
+    "lastName": "Сартабанова",
+    "gender": "female",
+    "spouseOf": "serik-permebay",
+    "notes": "Кіші жүз, Әлім, Шекті ішіндегі Тілеу руы. Ақтөбе облысы, Шалқар өңірінен.",
+    "motherId": "aldanysh-baqyt-nauryzali-sartaban"
+  },
+  {
+    "name": "Алдоңғар",
+    "id": "aldongar-segizbay",
+    "fatherId": "segizbay-sadigul"
+  },
+  {
     "name": "Жолдыаяқ",
     "id": "zholdyayaq-tileu",
     "fatherId": "tileu-ayt"
@@ -512,41 +618,6 @@
     "name": "Мөңке би",
     "id": "monke-bi-tileu",
     "fatherId": "tileu-ayt"
-  },
-  {
-    "name": "X",
-    "id": "x-tileu",
-    "fatherId": "tileu-ayt"
-  },
-  {
-    "name": "Сартабан",
-    "id": "sartaban-x",
-    "fatherId": "x-tileu"
-  },
-  {
-    "name": "Бақыт",
-    "id": "baqyt-sartaban",
-    "fatherId": "sartaban-x",
-    "lastName": "Сартабанов",
-    "birthday": "1912-07-25",
-    "notes": "Ақтөбе облысы, Шалқар ауданы, №1 ауылда туған. Ұлы Отан соғысына офицер болып қатысқан: 3-Белорус майданы, 371 атқыштар дивизиясы. Қызыл Жұлдыз орденімен, Кёнигсбергті алғаны үшін, Германияны және Жапонияны жеңгені үшін медальдарымен марапатталған. Дерек: pamyat-naroda.ru."
-  },
-  {
-    "name": "Алданыш",
-    "gender": "female",
-    "spouseOf": "baqyt-sartaban",
-    "fatherId": null,
-    "id": "aldanysh-baqyt-sartaban"
-  },
-  {
-    "name": "Алтынай",
-    "id": "altynay-baqyt",
-    "fatherId": "baqyt-sartaban",
-    "lastName": "Сартабанова",
-    "gender": "female",
-    "spouseOf": "serik-permebay",
-    "notes": "Кіші жүз, Әлім, Шекті ішіндегі Тілеу руы. Ақтөбе облысы, Шалқар өңірінен.",
-    "motherId": "aldanysh-baqyt-sartaban"
   },
   {
     "name": "Қабақ",
