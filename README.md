@@ -33,7 +33,7 @@ This project provides a dynamic and responsive visualization of family lineages,
 │   ├── data/          # JSON data source (family.json)
 │   ├── locales/       # Translation dictionaries (en.json, kk.json)
 │   ├── pages/         # Astro pages (entry point)
-│   ├── utils/         # i18n, relationship resolution (relations.js), layout (layout.js)
+│   ├── utils/         # i18n, relationship resolution (relations.js), layout (layout.js), display helpers (person.js)
 │   └── styles/        # Global CSS
 ├── scripts/
 │   ├── compile.js     # Script for compiling family.txt to family.json

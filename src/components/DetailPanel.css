@@ -30,7 +30,7 @@
   opacity: 1;
 }
 
-.close-btn {
+.btn.close-btn {
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
@@ -42,15 +42,10 @@
   font-size: 1.1rem;
   padding: 0;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.02);
-  border: 1px solid var(--card-border);
   color: var(--text-secondary);
-  cursor: pointer;
-  transition: var(--transition-speed) ease;
-  transition-property: background-color, border-color, color;
 }
 
-.close-btn:hover {
+.btn.close-btn:hover {
   background: rgba(0, 0, 0, 0.06);
   color: #000000;
   border-color: rgba(0, 0, 0, 0.2);
@@ -117,25 +112,24 @@
   color: var(--text-primary);
 }
 
-.children-list {
+.relative-list {
   list-style: none;
 }
 
-.children-list li {
+.relative-list li {
   padding: 0.4rem 0;
   color: var(--text-primary);
   font-size: 0.95rem;
   border-bottom: 1px dashed rgba(0, 0, 0, 0.04);
 }
 
-.children-list li:last-child {
+.relative-list li:last-child {
   border-bottom: none;
 }
 
-.bio-text,
-.no-data {
-  color: var(--text-secondary) !important;
-  font-size: 0.85rem !important;
+.info-group .muted-text {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
   font-style: italic;
   line-height: 1.4;
 }
@@ -159,15 +153,12 @@
   text-decoration: underline;
 }
 
-.spouse-item {
+.relative-list .spouse-item {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 0.15rem;
-  padding: 0.5rem 0 !important;
-}
-
-.spouse-main {
-  font-weight: 500;
+  padding: 0.5rem 0;
 }
 
 .spouse-relatives {
@@ -212,7 +203,7 @@
     }
   }
 
-  .close-btn {
+  .btn.close-btn {
     top: 0.75rem;
     right: 0.75rem;
     width: 44px;

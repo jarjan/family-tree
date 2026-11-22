@@ -21,15 +21,13 @@ import '../styles/global.css';
 	<body>
 		<TreeApp client:load />
 		<script>
-			if ('serviceWorker' in navigator) {
-				window.addEventListener('load', () => {
-					const base = import.meta.env.BASE_URL;
-					const swUrl = base.endsWith('/') ? `${base}sw.js` : `${base}/sw.js`;
-					navigator.serviceWorker.register(swUrl)
-						.then((reg) => console.log('Service Worker registered successfully:', reg.scope))
-						.catch((err) => console.error('Service Worker registration failed:', err));
-				});
-			}
+			// Offline support (public/sw.js). BASE_URL may or may not end with "/".
+			window.addEventListener('load', () => {
+				const swUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/sw.js`;
+				navigator.serviceWorker
+					?.register(swUrl)
+					.catch((err) => console.error('Service Worker registration failed:', err));
+			});
 		</script>
 	</body>
 </html>

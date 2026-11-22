@@ -1,22 +1,23 @@
+/* Card shapes: men are sharp rectangles with a square avatar,
+   women rounded capsules with a round, outlined avatar. */
 .member-node {
   width: 160px;
   padding: 0.5rem 0.75rem;
-  border-radius: 3px; /* Default: Male card is a sharp rectangle */
+  border-radius: 3px;
   display: flex;
   align-items: center;
   gap: 0.6rem;
   cursor: pointer;
+  font: inherit;
+  text-align: start;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   color: var(--text-primary);
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.04);
   transition: var(--transition-speed) var(--ease-out-expo);
   transition-property: translate, background-color, border-color, color, box-shadow;
-  position: relative;
-  z-index: 2;
 }
 
-/* Shape distinction: Female card is a rounded capsule shape */
 .member-node.female {
   border-radius: 20px;
 }
@@ -30,32 +31,35 @@
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
 }
 
-/* Selected state: invert to solid black */
+/* Selected: inverted to solid black (comes after :hover so it wins) */
 .member-node.selected {
-  background: #000000 !important;
-  border-color: #000000 !important;
-  color: #ffffff !important;
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+.member-node:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 3px;
+}
+
 .avatar-placeholder {
-  aspect-ratio: 1;
+  flex-shrink: 0;
   width: 28px;
   height: 28px;
-  border-radius: 4px; /* Default: Male is rounded square */
-  background: #1a1a1a; /* Stark dark fill for males */
-  border: none;
+  border-radius: 4px;
+  background: #1a1a1a;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 0.8rem;
-  color: #ffffff; /* White letters */
+  color: #ffffff;
   transition: var(--transition-speed) ease;
   transition-property: background-color, border-color, color;
 }
 
-/* Shape distinction: Female is circular and white fill with dark border */
 .member-node.female .avatar-placeholder {
   border-radius: 50%;
   background: #ffffff;
@@ -63,7 +67,6 @@
   color: #1a1a1a;
 }
 
-/* Selected state theme inversion */
 .member-node.selected .avatar-placeholder {
   background: #ffffff;
   color: #000000;
@@ -80,23 +83,16 @@
   display: flex;
   flex-direction: column;
   line-height: 1.2;
-}
-
-.name-container .first-name {
-  font-size: 0.8rem;
-  font-weight: 700;
   letter-spacing: 0.01em;
 }
 
-.name-container .last-name {
+.first-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.last-name {
   font-size: 0.72rem;
   font-weight: 300;
   opacity: 0.65;
-  letter-spacing: 0.01em;
-}
-
-
-.member-node:focus-visible {
-  outline: 2px solid #000000;
-  outline-offset: 3px;
 }

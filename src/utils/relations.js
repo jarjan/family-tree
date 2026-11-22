@@ -1,6 +1,6 @@
 /**
  * Relationship resolution for the family tree dataset.
- * Shared by TreeCanvas (layout) and DetailPanel (lists).
+ * getRelatives() feeds both computeLayout() (layout.js) and DetailPanel.
  */
 
 // Per-dataset lookup tables, built once and reused across calls.
@@ -93,6 +93,21 @@ export function siblingsOf(data, person) {
 }
 
 /**
+ * Children of each parent, grouped by parent. A child reachable through several
+ * parents is listed once, under the first; ids in `exclude` are skipped.
+ */
+function groupChildren(data, parents, exclude = new Set()) {
+  const seen = new Set(exclude);
+  const groups = [];
+  for (const parent of parents) {
+    const children = childrenOf(data, parent).filter((c) => !seen.has(c.id));
+    children.forEach((c) => seen.add(c.id));
+    if (children.length) groups.push({ parent, children });
+  }
+  return groups;
+}
+
+/**
  * Resolves all relatives for a focal node.
  *
  * @param {Array} data - Complete list of family member nodes.
@@ -126,8 +141,7 @@ export function getRelatives(data, node) {
   const { father, mother } = resolveParents(data, node);
   relatives.father = father;
   relatives.mother = mother;
-  if (father) relatives.parents.push(father);
-  if (mother) relatives.parents.push(mother);
+  relatives.parents = [father, mother].filter(Boolean);
 
   // Grandparents, tagged with the index of the parent they belong to
   relatives.parents.forEach((p, parentIdx) => {
@@ -151,41 +165,30 @@ export function getRelatives(data, node) {
   relatives.siblings = siblingsOf(data, node);
 
   relatives.children = childrenOf(data, node);
-  const seenGrandchildren = new Set();
-  for (const c of relatives.children) {
-    const kids = childrenOf(data, c).filter((gc) => !seenGrandchildren.has(gc.id));
-    kids.forEach((gc) => seenGrandchildren.add(gc.id));
-    if (kids.length) relatives.grandchildGroups.push({ parent: c, children: kids });
-    relatives.grandchildren.push(...kids);
-  }
+  relatives.grandchildGroups = groupChildren(data, relatives.children);
+  relatives.grandchildren = relatives.grandchildGroups.flatMap((g) => g.children);
 
   // Uncles & aunts, and their children (first cousins)
-  relatives.paternalUnclesAunts = father ? siblingsOf(data, father) : [];
-  relatives.maternalUnclesAunts = mother ? siblingsOf(data, mother) : [];
-
-  const seenCousins = new Set();
-  const addCousinGroups = (unclesAunts, side) => {
-    for (const ua of unclesAunts) {
-      const kids = childrenOf(data, ua).filter(
-        (c) => c.id !== node.id && !seenCousins.has(c.id)
-      );
-      kids.forEach((c) => seenCousins.add(c.id));
-      if (kids.length) relatives.cousinGroups.push({ parent: ua, side, children: kids });
-      relatives.cousins.push(...kids);
-    }
-  };
-  addCousinGroups(relatives.paternalUnclesAunts, "paternal");
-  addCousinGroups(relatives.maternalUnclesAunts, "maternal");
+  relatives.paternalUnclesAunts = siblingsOf(data, father);
+  relatives.maternalUnclesAunts = siblingsOf(data, mother);
+  relatives.cousinGroups = groupChildren(
+    data,
+    [...relatives.paternalUnclesAunts, ...relatives.maternalUnclesAunts],
+    new Set([node.id])
+  ).map(({ parent, children }) => ({
+    parent,
+    side: relatives.paternalUnclesAunts.includes(parent) ? "paternal" : "maternal",
+    children,
+  }));
+  relatives.cousins = relatives.cousinGroups.flatMap((g) => g.children);
 
   // Spouse's parents and siblings
-  relatives.spouseInfo = relatives.spouses.map((sp) => {
-    const sParents = resolveParents(data, sp);
+  relatives.spouseInfo = relatives.spouses.map((spouse) => {
+    const { father: sFather, mother: sMother } = resolveParents(data, spouse);
     return {
-      spouse: sp,
-      parents: [sParents.father, sParents.mother].filter(Boolean),
-      father: sParents.father,
-      mother: sParents.mother,
-      siblings: siblingsOf(data, sp),
+      spouse,
+      parents: [sFather, sMother].filter(Boolean),
+      siblings: siblingsOf(data, spouse),
     };
   });
 

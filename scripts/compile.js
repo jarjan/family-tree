@@ -1,11 +1,11 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// Compiles family.txt (the indented source of truth) into src/data/family.json.
+// Runs automatically before `npm run dev` / `npm run build`; the line format is described at parseLines().
+import fs from "node:fs";
+import path from "node:path";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const ROOT = path.dirname(import.meta.dirname);
 
-// Transliteration mapping for Kazakh Cyrillic to clean Latin
+// Kazakh Cyrillic -> Latin, used to build readable ids
 const TRANSLIT_MAP = {
   'а': 'a', 'ә': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'ғ': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
   'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'қ': 'q', 'л': 'l', 'м': 'm', 'н': 'n', 'ң': 'n', 'о': 'o',
@@ -15,22 +15,12 @@ const TRANSLIT_MAP = {
 
 function slugify(text) {
   if (!text) return "";
-  text = text.toLowerCase();
-  const res = [];
-  for (const char of text) {
-    if (TRANSLIT_MAP[char] !== undefined) {
-      res.push(TRANSLIT_MAP[char]);
-    } else if (/[a-z0-9]/i.test(char)) {
-      res.push(char);
-    } else if (char === ' ' || char === '-' || char === '_') {
-      res.push('-');
-    }
-  }
-  let slug = res.join('');
-  // Clean up double hyphens
-  slug = slug.replace(/-+/g, '-');
-  // Trim leading/trailing hyphens
-  return slug.replace(/^-+|-+$/g, '');
+  const chars = [...text.toLowerCase()].map((char) => {
+    if (TRANSLIT_MAP[char] !== undefined) return TRANSLIT_MAP[char];
+    if (/[a-z0-9]/.test(char)) return char;
+    return /[ _-]/.test(char) ? "-" : "";
+  });
+  return chars.join("").replace(/-+/g, "-").replace(/^-|-$/g, "");
 }
 
 const ATTR_KEYWORDS = ["id", "lastName", "gender", "spouseOf", "motherId", "fatherId", "birthday", "notes"];
@@ -38,18 +28,24 @@ const ATTR_KEYWORDS = ["id", "lastName", "gender", "spouseOf", "motherId", "fath
 // text such as `notes: gender: unknown` stays inside the notes value.
 const ATTR_KEY_REGEX = new RegExp(`(?:^|,)\\s*(${ATTR_KEYWORDS.join("|")})\\s*:`, "g");
 
+/** Parses `key: value, key: value` into an object; a value runs until the next keyword. */
 function parseAttrs(attrsStr) {
   const res = {};
   if (!attrsStr) return res;
 
   const matches = [...attrsStr.matchAll(ATTR_KEY_REGEX)];
-  for (let i = 0; i < matches.length; i++) {
-    const m = matches[i];
-    const startVal = m.index + m[0].length;
-    const endVal = i + 1 < matches.length ? matches[i + 1].index : attrsStr.length;
-    res[m[1]] = attrsStr.slice(startVal, endVal).trim();
-  }
+  matches.forEach((m, i) => {
+    const end = i + 1 < matches.length ? matches[i + 1].index : attrsStr.length;
+    res[m[1]] = attrsStr.slice(m.index + m[0].length, end).trim();
+  });
   return res;
+}
+
+/** Splits `Name [attrs]` into the name and its parsed attributes. */
+function parseEntry(text) {
+  const bracket = text.match(/\[([^\]]+)\]/);
+  if (!bracket) return { name: text.trim(), attrs: {} };
+  return { name: text.slice(0, bracket.index).trim(), attrs: parseAttrs(bracket[1].trim()) };
 }
 
 /**
@@ -105,217 +101,104 @@ function validateNodes(nodes) {
   return errors;
 }
 
-// Export helpers for testing
-export { slugify, parseAttrs, validateNodes, main };
+/** Copies the listed attributes that are present, in order (keeps the JSON key order stable). */
+function pick(attrs, keys) {
+  return Object.fromEntries(keys.filter((k) => attrs[k] !== undefined).map((k) => [k, attrs[k]]));
+}
 
-function main(txtPathOverride, jsonPathOverride) {
-  const baseDir = path.dirname(__dirname);
-  const txtPath = txtPathOverride || path.join(baseDir, "family.txt");
-  const jsonPath = jsonPathOverride || path.join(baseDir, "src", "data", "family.json");
-
-  if (!fs.existsSync(txtPath)) {
-    throw new Error(`${txtPath} not found.`);
-  }
-
-  const fileContent = fs.readFileSync(txtPath, "utf-8");
-  const lines = fileContent.split(/\r?\n/);
-
+/**
+ * Line format: `- Name [attrs] (spouse: Name [attrs])`. Indentation makes a line
+ * the child of the nearest less-indented line above it (its father).
+ */
+function parseLines(lines) {
   const nodes = [];
-  const generatedIds = new Set();
-  const stack = []; // items are { indent, node }
+  const usedIds = new Set();
+  const stack = []; // ancestors of the current line: { indent, node }
 
-  for (let i = 0; i < lines.length; i++) {
-    const rawLine = lines[i];
-    const lineNum = i + 1;
-    const strippedRaw = rawLine.trim();
-    
-    if (!strippedRaw || strippedRaw.startsWith("#")) {
-      continue; // empty line or comment
+  // An explicit `id:` wins; otherwise a slug, suffixed with -2, -3... on collision.
+  const assignId = (explicitId, base) => {
+    let id = explicitId || base;
+    for (let n = 2; !explicitId && usedIds.has(id); n++) id = `${base}-${n}`;
+    usedIds.add(id);
+    return id;
+  };
+
+  lines.forEach((rawLine, i) => {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) return;
+    if (!line.startsWith("-")) {
+      console.warn(`Warning: Line ${i + 1} does not start with '-' and will be skipped.`);
+      return;
     }
 
-    // Calculate indentation level (count leading whitespace)
     const indent = rawLine.length - rawLine.trimStart().length;
+    while (stack.length && stack.at(-1).indent >= indent) stack.pop();
+    const father = stack.at(-1)?.node ?? null;
 
-    // Ensure line starts with a list marker '-'
-    if (!strippedRaw.startsWith("-")) {
-      console.warn(`Warning: Line ${lineNum} does not start with '-' and will be skipped.`);
-      continue;
-    }
+    const spouseMatch = rawLine.match(/\(\s*spouse:\s*([^)]+)\)/);
+    const mainText = spouseMatch ? rawLine.replace(spouseMatch[0], "") : rawLine;
+    const main = parseEntry(mainText.trim());
+    main.name = main.name.replace(/^-/, "").trim();
 
-    // Parse inline spouse if present
-    // Format: (spouse: Spouse Name [spouse attrs])
-    const spouseRegex = /\(\s*spouse:\s*([^\)]+)\)/;
-    const spouseMatch = rawLine.match(spouseRegex);
-    let spouseName = null;
-    let spouseAttrsStr = null;
-    let mainPart = rawLine;
-
-    if (spouseMatch) {
-      const spouseFull = spouseMatch[1];
-      mainPart = rawLine.slice(0, spouseMatch.index) + rawLine.slice(spouseMatch.index + spouseMatch[0].length);
-
-      // Extract attributes from spouse
-      const spBracketMatch = spouseFull.match(/\[([^\]]+)\]/);
-      if (spBracketMatch) {
-        spouseName = spouseFull.slice(0, spBracketMatch.index).trim();
-        spouseAttrsStr = spBracketMatch[1].trim();
-      } else {
-        spouseName = spouseFull.trim();
-        spouseAttrsStr = "";
-      }
-    }
-
-    // Parse main node name and attributes
-    const mainPartStripped = mainPart.trim();
-    const bracketMatch = mainPartStripped.match(/\[([^\]]+)\]/);
-    let mainName = "";
-    let mainAttrsStr = "";
-    
-    if (bracketMatch) {
-      mainName = mainPartStripped.slice(0, bracketMatch.index).trim();
-      mainAttrsStr = bracketMatch[1].trim();
-    } else {
-      mainName = mainPartStripped.trim();
-      mainAttrsStr = "";
-    }
-
-    // Remove list marker '-' from main name
-    if (mainName.startsWith("-")) {
-      mainName = mainName.slice(1).trim();
-    }
-
-    const mainAttrs = parseAttrs(mainAttrsStr);
-    const spouseAttrs = spouseName ? parseAttrs(spouseAttrsStr) : {};
-
-    // Resolve parent (father) using stack
-    // Pop everything with indentation >= current line's indentation
-    while (stack.length > 0 && stack[stack.length - 1].indent >= indent) {
-      stack.pop();
-    }
-
-    const father = stack.length > 0 ? stack[stack.length - 1].node : null;
-
-    // Build main node dictionary
-    const mainNode = {
-      name: mainName
+    const baseId = father ? `${slugify(main.name)}-${slugify(father.name)}` : slugify(main.name);
+    const node = {
+      name: main.name,
+      id: assignId(main.attrs.id, baseId),
+      fatherId: father ? father.id : main.attrs.fatherId || null,
+      ...pick(main.attrs, ["lastName", "gender", "birthday", "motherId", "spouseOf", "notes"]),
     };
-    
-    // Determine ID
-    let mainId = "";
-    if (mainAttrs.id) {
-      mainId = mainAttrs.id;
-    } else {
-      const nameSlug = slugify(mainName);
-      let baseSlug = "";
-      if (father) {
-        const fatherSlug = slugify(father.name);
-        baseSlug = `${nameSlug}-${fatherSlug}`;
-      } else {
-        baseSlug = nameSlug;
-      }
-      
-      // Resolve collisions
-      let candidate = baseSlug;
-      let counter = 2;
-      while (generatedIds.has(candidate)) {
-        candidate = `${baseSlug}-${counter}`;
-        counter++;
-      }
-      mainId = candidate;
+    nodes.push(node);
+    stack.push({ indent, node });
+
+    const spouse = spouseMatch && parseEntry(spouseMatch[1]);
+    if (spouse?.name) {
+      nodes.push({
+        name: spouse.name,
+        gender: spouse.attrs.gender || "female",
+        spouseOf: node.id,
+        fatherId: spouse.attrs.fatherId || null,
+        id: assignId(spouse.attrs.id, `${slugify(spouse.name)}-${node.id}`),
+        ...pick(spouse.attrs, ["lastName", "birthday", "motherId", "notes"]),
+      });
     }
+  });
 
-    generatedIds.add(mainId);
-    mainNode.id = mainId;
-
-    // Set father relation
-    if (father) {
-      mainNode.fatherId = father.id;
-    } else {
-      mainNode.fatherId = mainAttrs.fatherId || null;
-    }
-
-    // Merge other attributes
-    const mainKeys = ["lastName", "gender", "birthday", "motherId", "spouseOf", "notes"];
-    for (const key of mainKeys) {
-      if (mainAttrs[key] !== undefined) {
-        mainNode[key] = mainAttrs[key];
-      }
-    }
-
-    nodes.push(mainNode);
-
-    // Push main node to stack for potential children
-    stack.push({ indent, node: mainNode });
-
-    // Add inline spouse if present
-    if (spouseName) {
-      const spouseNode = {
-        name: spouseName,
-        gender: spouseAttrs.gender || "female",
-        spouseOf: mainNode.id,
-        fatherId: spouseAttrs.fatherId || null
-      };
-      
-      // Determine spouse ID
-      let spouseId = "";
-      if (spouseAttrs.id) {
-        spouseId = spouseAttrs.id;
-      } else {
-        const spouseSlug = slugify(spouseName);
-        const baseSlug = `${spouseSlug}-${mainNode.id}`;
-        
-        let candidate = baseSlug;
-        let counter = 2;
-        while (generatedIds.has(candidate)) {
-          candidate = `${baseSlug}-${counter}`;
-          counter++;
-        }
-        spouseId = candidate;
-      }
-
-      generatedIds.add(spouseId);
-      spouseNode.id = spouseId;
-
-      // Merge other spouse attributes
-      const spouseKeys = ["lastName", "birthday", "motherId", "notes"];
-      for (const key of spouseKeys) {
-        if (spouseAttrs[key] !== undefined) {
-          spouseNode[key] = spouseAttrs[key];
-        }
-      }
-
-      nodes.push(spouseNode);
-    }
-  }
-
-  // Second pass: resolve motherId for children when the father has exactly one wife.
-  // With several wives the mother is ambiguous and must be given explicitly (motherId: ...).
+  // The mother is filled in only when the father has exactly one wife;
+  // with several wives it is ambiguous and must be given as `motherId:`.
+  const wivesOf = Map.groupBy(
+    nodes.filter((n) => n.spouseOf && n.gender === "female"),
+    (n) => n.spouseOf,
+  );
   for (const node of nodes) {
-    if (node.fatherId && !node.motherId) {
-      const wives = nodes.filter(n => n.spouseOf === node.fatherId && n.gender === "female");
-      if (wives.length === 1) {
-        node.motherId = wives[0].id;
-      }
-    }
+    const wives = wivesOf.get(node.fatherId);
+    if (node.fatherId && !node.motherId && wives?.length === 1) node.motherId = wives[0].id;
   }
+
+  return nodes;
+}
+
+function main(
+  txtPath = path.join(ROOT, "family.txt"),
+  jsonPath = path.join(ROOT, "src", "data", "family.json"),
+) {
+  if (!fs.existsSync(txtPath)) throw new Error(`${txtPath} not found.`);
+
+  const nodes = parseLines(fs.readFileSync(txtPath, "utf-8").split(/\r?\n/));
 
   const errors = validateNodes(nodes);
   if (errors.length > 0) {
     throw new Error(`${txtPath} has ${errors.length} problem(s):\n  - ${errors.join("\n  - ")}`);
   }
 
-  // Ensure output directory exists
-  const outputDir = path.dirname(jsonPath);
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
+  fs.mkdirSync(path.dirname(jsonPath), { recursive: true });
   fs.writeFileSync(jsonPath, JSON.stringify(nodes, null, 2), "utf-8");
   console.log(`Successfully compiled ${nodes.length} nodes to ${jsonPath}`);
 }
 
-// Execute compiler if run directly from the command line
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+export { slugify, parseAttrs, validateNodes, main };
+
+// Run when invoked from the command line (not when imported by tests)
+if (process.argv[1] === import.meta.filename) {
   try {
     main();
   } catch (err) {

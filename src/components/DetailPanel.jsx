@@ -1,197 +1,125 @@
 import { useT } from "../utils/i18n.js";
-import { getInitials } from "./MemberNode.jsx";
+import { cx, fullName, getInitials } from "../utils/person.js";
 import "./DetailPanel.css";
 
-function RelativeLink({ rel, onSelect }) {
-  if (!rel) return <span>-</span>;
+function RelativeLink({ person, onSelect }) {
+  if (!person) return "-";
   return (
-    <button type="button" className="clickable-relative" onClick={() => onSelect(rel.id)}>
-      {rel.name} {rel.lastName || ""}
+    <button type="button" className="clickable-relative" onClick={() => onSelect(person.id)}>
+      {fullName(person)}
     </button>
+  );
+}
+
+function InfoGroup({ title, children }) {
+  return (
+    <div className="info-group">
+      <h4>{title}</h4>
+      {children}
+    </div>
+  );
+}
+
+/** "Title (n)" with a list of links; hidden when empty unless `showEmpty`. */
+function RelativeList({ title, people, onSelect, showEmpty = false }) {
+  if (!people.length && !showEmpty) return null;
+  return (
+    <InfoGroup title={`${title} (${people.length})`}>
+      {people.length ? (
+        <ul className="relative-list">
+          {people.map((p) => (
+            <li key={p.id}>
+              <RelativeLink person={p} onSelect={onSelect} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="muted-text">-</p>
+      )}
+    </InfoGroup>
+  );
+}
+
+/** "Label: A, B" line under a spouse. */
+function InlineRelatives({ label, people, onSelect }) {
+  if (!people.length) return null;
+  return (
+    <div className="spouse-relatives">
+      <span className="spouse-relatives-label">{label}: </span>
+      {people.map((p, i) => (
+        <span key={p.id}>
+          {i > 0 && ", "}
+          <RelativeLink person={p} onSelect={onSelect} />
+        </span>
+      ))}
+    </div>
   );
 }
 
 export function DetailPanel({ node, relatives, onSelect, onClose, isOpen }) {
   const t = useT();
-  const {
-    spouseInfo,
-    father,
-    mother,
-    grandparents,
-    children,
-    grandchildren,
-    siblings,
-    cousins: uniqueCousins
-  } = relatives;
+  const { spouseInfo, father, mother, grandparents, children, grandchildren, siblings, cousins } = relatives;
 
   return (
-    <aside
-      className={`detail-panel glass ${isOpen ? "open" : ""}`}
-      aria-label={t("detailsTitle")}
-    >
+    <aside className={cx("detail-panel glass", isOpen && "open")} aria-label={t("detailsTitle")}>
       <div className="panel-handle"></div>
       <button className="close-btn btn" onClick={onClose} aria-label={t("close")}>
         ×
       </button>
 
       <div className="panel-header">
-        <div
-          className={`panel-avatar ${node.gender === "female" ? "female" : ""}`}
-        >
-          {getInitials(node)}
-        </div>
-        <h2>
-          {node.name} {node.lastName || ""}
-        </h2>
+        <div className={cx("panel-avatar", node.gender === "female" && "female")}>{getInitials(node)}</div>
+        <h2>{fullName(node)}</h2>
       </div>
 
       <div className="panel-content">
         {node.birthday && (
-          <div className="info-group">
-            <h4>{t("born")}</h4>
+          <InfoGroup title={t("born")}>
             <p>{node.birthday}</p>
-          </div>
+          </InfoGroup>
         )}
 
-        <div className="info-group">
-          <h4>{t("gender")}</h4>
+        <InfoGroup title={t("gender")}>
           <p>{node.gender === "female" ? t("female") : t("male")}</p>
-        </div>
+        </InfoGroup>
 
-        {grandparents.length > 0 && (
-          <div className="info-group">
-            <h4>
-              {t("grandparents")} ({grandparents.length})
-            </h4>
-            <ul className="children-list">
-              {grandparents.map((gp) => (
-                <li key={gp.id}>
-                  <RelativeLink onSelect={onSelect} rel={gp} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <RelativeList title={t("grandparents")} people={grandparents} onSelect={onSelect} />
 
-        <div className="info-group">
-          <h4>{t("father")}</h4>
+        <InfoGroup title={t("father")}>
           <p>
-            <RelativeLink onSelect={onSelect} rel={father} />
+            <RelativeLink person={father} onSelect={onSelect} />
           </p>
-        </div>
+        </InfoGroup>
 
-        <div className="info-group">
-          <h4>{t("mother")}</h4>
+        <InfoGroup title={t("mother")}>
           <p>
-            <RelativeLink onSelect={onSelect} rel={mother} />
+            <RelativeLink person={mother} onSelect={onSelect} />
           </p>
-        </div>
+        </InfoGroup>
 
-        {siblings.length > 0 && (
-          <div className="info-group">
-            <h4>
-              {t("siblings")} ({siblings.length})
-            </h4>
-            <ul className="children-list">
-              {siblings.map((s) => (
-                <li key={s.id}>
-                  <RelativeLink onSelect={onSelect} rel={s} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {uniqueCousins.length > 0 && (
-          <div className="info-group">
-            <h4>
-              {t("cousins")} ({uniqueCousins.length})
-            </h4>
-            <ul className="children-list">
-              {uniqueCousins.map((s) => (
-                <li key={s.id}>
-                  <RelativeLink onSelect={onSelect} rel={s} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <RelativeList title={t("siblings")} people={siblings} onSelect={onSelect} />
+        <RelativeList title={t("cousins")} people={cousins} onSelect={onSelect} />
 
         {spouseInfo.length > 0 && (
-          <div className="info-group">
-            <h4>{t("spouse")}</h4>
-            <ul className="children-list">
-              {spouseInfo.map(({ spouse, parents, siblings }) => {
-                return (
-                  <li key={spouse.id} className="spouse-item">
-                    <div className="spouse-main">
-                      <RelativeLink onSelect={onSelect} rel={spouse} />
-                    </div>
-                    {parents.length > 0 && (
-                      <div className="spouse-relatives">
-                        <span className="spouse-relatives-label">{t("spouseParents")}: </span>
-                        {parents.map((p, idx) => (
-                          <span key={p.id}>
-                            <RelativeLink onSelect={onSelect} rel={p} />
-                            {idx < parents.length - 1 ? ", " : ""}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {siblings.length > 0 && (
-                      <div className="spouse-relatives">
-                        <span className="spouse-relatives-label">{t("spouseSiblings")}: </span>
-                        {siblings.map((sib, idx) => (
-                          <span key={sib.id}>
-                            <RelativeLink onSelect={onSelect} rel={sib} />
-                            {idx < siblings.length - 1 ? ", " : ""}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
-
-        <div className="info-group">
-          <h4>
-            {t("children")} ({children.length})
-          </h4>
-          {children.length > 0 ? (
-            <ul className="children-list">
-              {children.map((c) => (
-                <li key={c.id}>
-                  <RelativeLink onSelect={onSelect} rel={c} />
+          <InfoGroup title={t("spouse")}>
+            <ul className="relative-list">
+              {spouseInfo.map(({ spouse, parents, siblings }) => (
+                <li key={spouse.id} className="spouse-item">
+                  <RelativeLink person={spouse} onSelect={onSelect} />
+                  <InlineRelatives label={t("spouseParents")} people={parents} onSelect={onSelect} />
+                  <InlineRelatives label={t("spouseSiblings")} people={siblings} onSelect={onSelect} />
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className="no-data">-</p>
-          )}
-        </div>
-
-        {grandchildren.length > 0 && (
-          <div className="info-group">
-            <h4>
-              {t("grandchildren")} ({grandchildren.length})
-            </h4>
-            <ul className="children-list">
-              {grandchildren.map((gc) => (
-                <li key={gc.id}>
-                  <RelativeLink onSelect={onSelect} rel={gc} />
-                </li>
-              ))}
-            </ul>
-          </div>
+          </InfoGroup>
         )}
 
-        <div className="info-group">
-          <h4>{node.notes ? t("notes") : t("detailsTitle")}</h4>
-          <p className="bio-text">{node.notes || t("noBio")}</p>
-        </div>
+        <RelativeList title={t("children")} people={children} onSelect={onSelect} showEmpty />
+        <RelativeList title={t("grandchildren")} people={grandchildren} onSelect={onSelect} />
+
+        <InfoGroup title={node.notes ? t("notes") : t("detailsTitle")}>
+          <p className="muted-text">{node.notes || t("noBio")}</p>
+        </InfoGroup>
       </div>
     </aside>
   );

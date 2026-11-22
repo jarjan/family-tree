@@ -7,36 +7,38 @@
   touch-action: none; /* pan/pinch are handled in JS */
   -webkit-user-select: none; /* dragging must not select card text */
   user-select: none;
-  --canvas-center-y: 50%;
 }
 
 .canvas-container:active {
   cursor: grabbing;
 }
 
+/* Origin of the tree (the focal person sits at 0,0); --tx/--ty/--scale are set
+   from TreeCanvas.jsx while panning and zooming. */
 .canvas-layer {
   position: absolute;
   top: var(--canvas-center-y, 50%);
   left: 50%;
   transform-origin: 0 0;
   transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--scale, 1));
-  transition: var(--transition-style, transform 0.05s linear);
 }
 
-.edges-layer {
-  overflow: visible;
+.edges-layer,
+.nodes-layer {
   position: absolute;
   top: 0;
   left: 0;
+  overflow: visible;
 }
 
+/* Centred on the layout's x/y; the selected card stays above its neighbours */
 .node-wrapper {
   position: absolute;
   transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  z-index: var(--z-index, 1);
+}
+
+.node-wrapper:has(> .selected) {
+  z-index: 1;
 }
 
 .tree-link {
@@ -49,7 +51,6 @@
 
 .spouse-link {
   stroke-dasharray: 4 4;
-  stroke-width: 1px;
   opacity: 0.5;
 }
 
@@ -63,12 +64,6 @@
 .paternal-link {
   stroke-width: 2px;
   stroke: rgba(0, 0, 0, 0.45);
-}
-
-.nodes-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .canvas-controls {
@@ -121,7 +116,6 @@
   .canvas-controls {
     bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
     left: max(1rem, env(safe-area-inset-left, 0px));
-    flex-direction: column;
     gap: 0.4rem;
     padding: 0.4rem;
     transition: bottom 0.3s var(--ease-out-expo);

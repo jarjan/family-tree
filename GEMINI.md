@@ -30,7 +30,7 @@ This document provides foundational mandates and architectural guidance for the 
 
 ## 🛠 Workflows & Testing
 
-- **Component Structure:** Keep Preact components in `src/components/`. Pair each `.jsx` file with a corresponding `.css` file in the same directory.
+- **Component Structure:** Keep Preact components in `src/components/`. Pair each `.jsx` file with a corresponding `.css` file in the same directory. Shared display helpers (`fullName`, `getInitials`, `cx` for class names) live in `src/utils/person.js`.
 - **Tree Visualization:** The `TreeCanvas.jsx` component handles rendering and pan/zoom; layout comes from `computeLayout()`. It dynamically builds a "family circle" around the selected member, showing ancestors, descendants, siblings, and cousins.
 - **Testing:** Run tests with `npm test` (`node --test tests/*.test.js`).
 - **Deployment:** The project is deployed to GitHub Pages at `/family-tree/`. Always ensure `base: '/family-tree'` in `astro.config.mjs` is respected when adding links or asset paths.

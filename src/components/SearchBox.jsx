@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from "preact/hooks";
 import { useT } from "../utils/i18n.js";
+import { cx, fullName } from "../utils/person.js";
 import "./SearchBox.css";
 
 const MAX_RESULTS = 8;
 
-const fullName = (p) => [p.name, p.lastName].filter(Boolean).join(" ");
 const normalize = (s) => s.toLocaleLowerCase("kk").trim();
 
 export function SearchBox({ data, onSelect }) {
@@ -95,7 +95,7 @@ export function SearchBox({ data, onSelect }) {
               id={`search-result-${i}`}
               role="option"
               aria-selected={i === activeIdx}
-              className={`search-result ${i === activeIdx ? "active" : ""}`}
+              className={cx("search-result", i === activeIdx && "active")}
               // mousedown (not click) so it fires before the input's blur closes the list
               onMouseDown={(e) => {
                 e.preventDefault();

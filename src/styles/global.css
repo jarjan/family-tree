@@ -4,10 +4,6 @@
   --text-primary: #1a1a1a;
   --text-secondary: #6c757d;
   --text-muted: #adb5bd;
-  --accent-color: #000000;
-  --accent-glow: rgba(0, 0, 0, 0.05);
-  --female-color: #000000;
-  --female-glow: rgba(0, 0, 0, 0.05);
   --card-bg: rgba(255, 255, 255, 0.8);
   --card-border: rgba(0, 0, 0, 0.08);
   --line-color: rgba(0, 0, 0, 0.12);
@@ -74,6 +70,11 @@ p {
   letter-spacing: 0.05em;
   transition: var(--transition-speed) ease;
   transition-property: background-color, border-color, color;
+
+  @media (max-width: 767px) {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
 }
 
 .btn:hover {
