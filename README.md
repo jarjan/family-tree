@@ -36,8 +36,12 @@ This project provides a dynamic and responsive visualization of family lineages,
 │   ├── utils/         # i18n, relationship resolution (relations.js), layout (layout.js), display helpers (person.js)
 │   └── styles/        # Global CSS
 ├── scripts/
-│   ├── compile.js     # Script for compiling family.txt to family.json
+│   ├── compile.js         # Compiles family.txt to family.json
+│   └── generate-icons.js  # Regenerates favicons and app icons in public/
+├── public/            # Icons, web app manifest and service worker (sw.js)
+├── tests/             # node:test suites (compiler, relations, layout, i18n)
 ├── family.txt         # Indented family tree text representation (source of truth)
+├── AGENTS.md          # Guide for coding agents (CLAUDE.md and GEMINI.md link to it)
 └── astro.config.mjs   # Astro configuration (base path, integrations)
 ```
 
@@ -74,7 +78,7 @@ The family tree data is stored in `src/data/family.json`. Each member is an obje
 - `motherId`: ID of the mother.
 - `spouseOf`: ID of the spouse.
 - `gender`: `male` or `female`.
-- `birthday`: `YYYY-MM-DD`.
+- `birthday`: `YYYY`, `YYYY-MM` or `YYYY-MM-DD`.
 - `notes`: Additional biographical details.
 
 ### Data Compilation
